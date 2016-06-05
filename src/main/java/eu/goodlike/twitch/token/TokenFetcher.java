@@ -1,34 +1,20 @@
 package eu.goodlike.twitch.token;
 
-import eu.goodlike.libraries.jackson.Json;
+import eu.goodlike.okhttp.JsonCallback;
 import eu.goodlike.utils.StringFormatter;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public final class TokenFetcher {
 
-    public Token generateNewToken(String vodId) {
-        String finalUrl = StringFormatter.format(tokenUrl, vodId);
+    public CompletableFuture<Token> generateNewToken(String vodId) {
+        String finalUrl = StringFormatter.format(TOKEN_URL, vodId);
         Request request = new Request.Builder()
                 .url(finalUrl)
                 .build();
 
-        Response response;
-        try {
-            response = client.newCall(request).execute();
-        } catch (IOException e) {
-            throw new RuntimeException("HTTP request to Twitch failed: " + finalUrl, e);
-        }
-        Token token;
-        try {
-            token = Json.from(response.body().byteStream()).to(Token.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Parsing token response failed", e);
-        }
-        return token;
+        return JsonCallback.asFuture(client.newCall(request), Token.class);
     }
 
     // CONSTRUCTORS
@@ -41,6 +27,6 @@ public final class TokenFetcher {
 
     private final OkHttpClient client;
 
-    private static final String tokenUrl = "https://api.twitch.tv/api/vods/{}/access_token";
+    private static final String TOKEN_URL = "https://api.twitch.tv/api/vods/{}/access_token";
 
 }
