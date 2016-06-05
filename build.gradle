@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+    }
+}
+
+group 'eu.goodlike'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'java'
+apply plugin: 'idea'
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:19.0'
+
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.4'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
+
+    compile 'com.iheartradio.m3u8:open-m3u8:0.2.4'
+
+    compile 'org.slf4j:slf4j-api:1.7.21'
+
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+}
