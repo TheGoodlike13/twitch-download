@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public final class CommandLineRunner implements AutoCloseable {
 
-    public void execute(String... input) {
+    public Process execute(String... input) {
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command(input)
                 .redirectErrorStream(true);
@@ -21,6 +23,7 @@ public final class CommandLineRunner implements AutoCloseable {
             throw new RuntimeException("Executing command on runtime failed: " + Arrays.toString(input), e);
         }
         executor.submit(() -> outputExecutionToConsole(process, input));
+        return process;
     }
 
     @Override
@@ -43,14 +46,16 @@ public final class CommandLineRunner implements AutoCloseable {
     private final ExecutorService executor;
 
     private void outputExecutionToConsole(Process process, String... command) {
-        String processPrefix = "Process Nr." + PROCESS_COUNT.incrementAndGet() + ": ";
+        String processPrefix = "Process " + PROCESS_COUNT.incrementAndGet() + " --- ";
+        String commandString = Arrays.stream(command).collect(Collectors.joining(" "));
+        System.out.println(processPrefix + "Running: " + commandString);
         BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         try {
             while ((line = input.readLine()) != null)
                 System.out.println(processPrefix + line);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read output from executed command: " + Arrays.toString(command), e);
+            throw new RuntimeException("Failed to read output from executed command: " + commandString, e);
         }
         System.out.println(processPrefix + "TERMINATED with value " + process.exitValue());
     }
