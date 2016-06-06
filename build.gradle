@@ -32,8 +32,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
 
-    compile 'com.iheartradio.m3u8:open-m3u8:0.2.4'
-
     compile 'org.slf4j:slf4j-api:1.7.21'
 
     compile fileTree(dir: 'lib', include: ['*.jar'])
