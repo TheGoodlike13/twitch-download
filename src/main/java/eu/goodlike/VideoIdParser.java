@@ -27,7 +27,7 @@ public final class VideoIdParser {
         List<String> allParameters = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             String nextArg = args[i];
-            if ("-help".equals(nextArg)) {
+            if ("-h".equals(nextArg) || "-help".equals(nextArg)) {
                 if (i != 0 || args.length > 1)
                     System.out.println("Using -help cancels ALL other options");
 

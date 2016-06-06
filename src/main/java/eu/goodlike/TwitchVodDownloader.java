@@ -18,7 +18,7 @@ public final class TwitchVodDownloader {
     public static void main(String... args) {
         VideoIdParser parser = VideoIdParser.parse(args);
         if (parser == null) {
-            System.out.println("Please enter at least one VoD id/link");
+            System.out.println("Please enter at least one VoD id/link (use -help to see allowed formats)");
             return;
         }
 
