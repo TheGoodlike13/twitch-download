@@ -1,15 +1,18 @@
 package eu.goodlike;
 
-import com.google.common.io.Files;
 import com.google.common.primitives.Ints;
 import eu.goodlike.cmd.CommandLineRunner;
 import eu.goodlike.twitch.playlist.PlaylistFetcher;
+import eu.goodlike.twitch.stream.StreamData;
+import eu.goodlike.twitch.stream.StreamDataFetcher;
 import eu.goodlike.twitch.token.TokenFetcher;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public final class TwitchVodDownloader {
@@ -20,12 +23,13 @@ public final class TwitchVodDownloader {
             return;
         }
 
-        List<Integer> params = validateParams(args);
+        Set<Integer> params = validateParams(args);
 
         OkHttpClient client = new OkHttpClient();
         CommandLineRunner commandLineRunner = new CommandLineRunner();
         TokenFetcher tokenFetcher = new TokenFetcher(client);
         PlaylistFetcher playlistFetcher = new PlaylistFetcher(client);
+        StreamDataFetcher streamDataFetcher = new StreamDataFetcher(client);
 
         List<CompletableFuture<?>> listOfFutures = new ArrayList<>();
         List<CompletableFuture<File>> cleanupFutures = new ArrayList<>();
@@ -35,9 +39,9 @@ public final class TwitchVodDownloader {
                     .thenCompose(token -> playlistFetcher.fetchStreamPlaylist(token, vodId));
             cleanupFutures.add(fileFuture);
 
-            CompletableFuture<?> future = fileFuture
-                    .thenApply(File::getName)
-                    .thenApply(filename -> ffmpegExecution(commandLineRunner, filename))
+            CompletableFuture<?> future = streamDataFetcher.fetchStreamDataForVodId(vodId)
+                    .thenApply(StreamData::getFullFileName)
+                    .thenCombine(fileFuture, (filename, file) -> ffmpegExecution(commandLineRunner, file.getName(), filename))
                     .thenAccept(TwitchVodDownloader::safelyWaitForProcessToComplete)
                     .whenComplete((any, ex) -> {if (ex != null) ex.printStackTrace();});
             listOfFutures.add(future);
@@ -57,8 +61,8 @@ public final class TwitchVodDownloader {
         System.out.println("Please add at least one vodId for download");
     }
 
-    private static List<Integer> validateParams(String... args) {
-        List<Integer> params = new ArrayList<>();
+    private static Set<Integer> validateParams(String... args) {
+        Set<Integer> params = new HashSet<>();
         for (String arg : args) {
             String formattedArg = arg.startsWith("http")
                     ? arg.substring(arg.lastIndexOf("/") + 1)
@@ -66,18 +70,23 @@ public final class TwitchVodDownloader {
 
             Integer vodId = Ints.tryParse(formattedArg);
             if (vodId == null)
-                System.out.println("Reject arg because cannot parse VoD id from it: " + arg);
-            else
-                params.add(vodId);
+                System.out.println("Rejected arg because cannot parse VoD id from it: " + arg);
+            else if (!params.add(vodId)) {
+                System.out.println("Duplicate VoD id skipped: " + vodId);
+            }
         }
         return params;
     }
 
-    private static Process ffmpegExecution(CommandLineRunner commandLineRunner, String filename) {
+    private static Process ffmpegExecution(CommandLineRunner commandLineRunner, String playlistFilename, String outputFilename) {
         return commandLineRunner.execute("ffmpeg",
-                "-i", filename,
+                "-i", inQuotes(playlistFilename),
                 "-bsf:a", "aac_adtstoasc",
-                "-c", "copy", Files.getNameWithoutExtension(filename) + ".mp4");
+                "-c", "copy", inQuotes(outputFilename + ".mp4"));
+    }
+
+    private static String inQuotes(String string) {
+        return "\"" + string + "\"";
     }
 
     private static void safelyWaitForProcessToComplete(Process process) {
