@@ -48,3 +48,8 @@ gradle.properties
 .idea/tasks.xml
 .idea/vcs.xml
 .idea/workspace.xml
+
+# Misc
+
+*.mp4
+*.m3u8
