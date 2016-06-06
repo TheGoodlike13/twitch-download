@@ -4,6 +4,7 @@ import eu.goodlike.okhttp.ResponseCallback;
 import eu.goodlike.twitch.m3u8.CustomM3U8Parser;
 import eu.goodlike.twitch.m3u8.StreamPart;
 import eu.goodlike.twitch.token.Token;
+import eu.goodlike.utils.FileUtils;
 import eu.goodlike.utils.Futures;
 import eu.goodlike.utils.StringFormatter;
 import okhttp3.OkHttpClient;
@@ -81,24 +82,13 @@ public final class PlaylistFetcher {
             return Futures.failedFuture(e);
         }
         String filename = url.substring(finalDelimiter);
-        Path path = ensureNonExistentPath(filename);
+        Path path = Paths.get(FileUtils.findNonTakenName(filename));
         try {
             Files.write(path, fileLines, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             return Futures.failedFuture(e);
         }
         return CompletableFuture.completedFuture(path.toFile());
-    }
-
-    private Path ensureNonExistentPath(String filename) {
-        String workingFilename = filename;
-        int copyCount = 0;
-        Path path = Paths.get(workingFilename);
-        while (Files.exists(path)) {
-            workingFilename = filename + " (" + ++copyCount + ")";
-            path = Paths.get(workingFilename);
-        }
-        return path;
     }
 
     private static final String PLAYLIST_URL =
