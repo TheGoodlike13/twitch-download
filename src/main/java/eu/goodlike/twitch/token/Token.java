@@ -2,22 +2,18 @@ package eu.goodlike.twitch.token;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.ALWAYS)
 public final class Token {
 
-    @JsonProperty("token")
     public String getToken() {
         return token;
     }
 
-    @JsonProperty("sig")
     public String getSig() {
         return sig;
     }
