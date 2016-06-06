@@ -1,5 +1,6 @@
 package eu.goodlike.utils;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -13,6 +14,12 @@ public final class Futures {
             else
                 errorConsumer.accept(error);
         };
+    }
+
+    public static <T> CompletableFuture<T> failedFuture(Throwable t) {
+        CompletableFuture<T> failedFuture = new CompletableFuture<>();
+        failedFuture.completeExceptionally(t);
+        return failedFuture;
     }
 
     // PRIVATE
