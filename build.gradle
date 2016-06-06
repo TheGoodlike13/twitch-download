@@ -4,15 +4,17 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
 
 group 'eu.goodlike'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
