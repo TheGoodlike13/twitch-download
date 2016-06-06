@@ -81,13 +81,24 @@ public final class PlaylistFetcher {
             return Futures.failedFuture(e);
         }
         String filename = url.substring(finalDelimiter);
-        Path path = Paths.get(filename);
+        Path path = ensureNonExistentPath(filename);
         try {
             Files.write(path, fileLines, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             return Futures.failedFuture(e);
         }
         return CompletableFuture.completedFuture(path.toFile());
+    }
+
+    private Path ensureNonExistentPath(String filename) {
+        String workingFilename = filename;
+        int copyCount = 0;
+        Path path = Paths.get(workingFilename);
+        while (Files.exists(path)) {
+            workingFilename = filename + " (" + ++copyCount + ")";
+            path = Paths.get(workingFilename);
+        }
+        return path;
     }
 
     private static final String PLAYLIST_URL =
