@@ -1,6 +1,5 @@
 package eu.goodlike;
 
-import com.google.common.primitives.Ints;
 import eu.goodlike.cmd.CommandLineRunner;
 import eu.goodlike.twitch.playlist.PlaylistFetcher;
 import eu.goodlike.twitch.stream.StreamData;
@@ -10,7 +9,6 @@ import okhttp3.OkHttpClient;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -18,12 +16,17 @@ import java.util.concurrent.CompletableFuture;
 public final class TwitchVodDownloader {
 
     public static void main(String... args) {
-        if (args.length < 1) {
-            zeroArgsFallback();
+        VideoIdParser parser = VideoIdParser.parse(args);
+        if (parser == null) {
+            System.out.println("Please enter at least one VoD id/link");
             return;
         }
 
-        Set<Integer> params = validateParams(args);
+        Set<Integer> params = parser.getVodIds();
+        if (params.isEmpty()) {
+            System.out.println("Could not parse ANY VoD id/links (use -help to see allowed formats)");
+            return;
+        }
 
         OkHttpClient client = new OkHttpClient();
         CommandLineRunner commandLineRunner = new CommandLineRunner();
@@ -55,27 +58,6 @@ public final class TwitchVodDownloader {
 
     private TwitchVodDownloader() {
         throw new AssertionError("Do not instantiate this class, it is only used for 'main' method!");
-    }
-
-    private static void zeroArgsFallback() {
-        System.out.println("Please add at least one vodId for download");
-    }
-
-    private static Set<Integer> validateParams(String... args) {
-        Set<Integer> params = new HashSet<>();
-        for (String arg : args) {
-            String formattedArg = arg.startsWith("http")
-                    ? arg.substring(arg.lastIndexOf("/") + 1)
-                    : arg;
-
-            Integer vodId = Ints.tryParse(formattedArg);
-            if (vodId == null)
-                System.out.println("Rejected arg because cannot parse VoD id from it: " + arg);
-            else if (!params.add(vodId)) {
-                System.out.println("Duplicate VoD id skipped: " + vodId);
-            }
-        }
-        return params;
     }
 
     private static Process ffmpegExecution(CommandLineRunner commandLineRunner, String playlistFilename, String outputFilename) {
