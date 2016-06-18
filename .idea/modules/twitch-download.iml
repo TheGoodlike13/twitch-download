@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="twitch-download" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.id="twitch-download" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="eu.goodlike" external.system.module.version="1.1" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../build" />
     <output-test url="file://$MODULE_DIR$/../../build" />
@@ -10,23 +10,24 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/test/resources" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:19.0" level="project" />
     <orderEntry type="module-library">
-      <library name="Gradle: goodlike-commons-1.0">
+      <library name="Gradle: goodlike-utils-1.0">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/goodlike-commons-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/goodlike-utils-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Gradle: goodlike-commons-1.0-sources">
+      <library name="Gradle: goodlike-utils-1.0-sources">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/goodlike-commons-1.0-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/goodlike-utils-1.0-sources.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

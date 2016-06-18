@@ -1,24 +1,12 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-    }
-}
+plugins {
+    id 'java'
+    id 'idea'
 
-group 'eu.goodlike'
-version '1.1'
+    // helps me keep up to date with dependencies
+    id "com.github.ben-manes.versions" version "0.12.0"
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    options.encoding = 'UTF-8'
+    // builds fatJar efficiently (much faster than normal)
+    id "com.github.johnrengelman.shadow" version "1.2.3"
 }
 
 repositories {
@@ -26,29 +14,37 @@ repositories {
 }
 
 dependencies {
+    // I DID IT! PRAISE THE REPOSITORY!
+    compile 'eu.goodlike:goodlike-utils:0.0.1'
+
+    // used for various utility methods
     compile 'com.google.guava:guava:19.0'
 
+    // used for HTTP requests
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.4'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
+    // used for JSON conversion
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.0.rc2'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.0.rc2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.0.rc2'
 
+    // used for their unique (lazy) way to insert objects into Strings
     compile 'org.slf4j:slf4j-api:1.7.21'
-
-    compile fileTree(dir: 'lib', include: ['*.jar'])
 }
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
+group 'eu.goodlike'
+version '1.1'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = 'UTF-8'
 }
 
 jar {
-    dependsOn copyToLib
-
-    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
-
     manifest {
         attributes 'Main-Class': 'eu.goodlike.TwitchVodDownloader'
         attributes "Class-Path": configurations.compile.collect { 'lib\\' + it.getName() }.join(' ')
