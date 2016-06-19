@@ -1,12 +1,12 @@
 package eu.goodlike.twitch.playlist;
 
-import eu.goodlike.okhttp.ResponseCallback;
+import eu.goodlike.functional.Futures;
+import eu.goodlike.libraries.okhttp.ResponseCallback;
+import eu.goodlike.misc.FileUtils;
+import eu.goodlike.neat.Str;
 import eu.goodlike.twitch.m3u8.CustomM3U8Parser;
 import eu.goodlike.twitch.m3u8.StreamPart;
 import eu.goodlike.twitch.token.Token;
-import eu.goodlike.utils.FileUtils;
-import eu.goodlike.utils.Futures;
-import eu.goodlike.utils.StringFormatter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 public final class PlaylistFetcher {
 
     public CompletableFuture<File> fetchStreamPlaylist(Token token, int vodId) {
-        String finalUrl = StringFormatter.format(PLAYLIST_URL, vodId, token.getSig(), token.getToken());
+        String finalUrl = Str.format(PLAYLIST_URL, vodId, token.getSig(), token.getToken());
         System.out.println("Downloading stream playlists at: " + finalUrl);
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -82,7 +82,7 @@ public final class PlaylistFetcher {
             return Futures.failedFuture(e);
         }
         String filename = url.substring(finalDelimiter);
-        Path path = Paths.get(FileUtils.findNonTakenName(filename));
+        Path path = Paths.get(FileUtils.findAvailableName(filename));
         try {
             Files.write(path, fileLines, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {

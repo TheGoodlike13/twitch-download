@@ -1,11 +1,11 @@
 package eu.goodlike;
 
 import eu.goodlike.cmd.CommandLineRunner;
+import eu.goodlike.misc.FileUtils;
 import eu.goodlike.twitch.playlist.PlaylistFetcher;
 import eu.goodlike.twitch.stream.StreamData;
 import eu.goodlike.twitch.stream.StreamDataFetcher;
 import eu.goodlike.twitch.token.TokenFetcher;
-import eu.goodlike.utils.FileUtils;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -65,7 +65,7 @@ public final class TwitchVodDownloader {
         return commandLineRunner.execute("ffmpeg",
                 "-i", inQuotes(playlistFilename),
                 "-bsf:a", "aac_adtstoasc",
-                "-c", "copy", inQuotes(FileUtils.findNonTakenName(outputFilename + ".mp4")));
+                "-c", "copy", inQuotes(FileUtils.findAvailableName(outputFilename + ".mp4")));
     }
 
     private static String inQuotes(String string) {

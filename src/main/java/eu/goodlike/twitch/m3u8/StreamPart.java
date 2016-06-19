@@ -1,7 +1,7 @@
 package eu.goodlike.twitch.m3u8;
 
 import com.google.common.base.MoreObjects;
-import eu.goodlike.utils.StringFormatter;
+import eu.goodlike.neat.Str;
 
 import java.util.Objects;
 
@@ -14,11 +14,11 @@ public final class StreamPart {
             formattedDuration.setCharAt(0, '0');
         formattedDuration.insert(formattedDuration.length() - 3, '.');
 
-        return StringFormatter.format("#EXTINF:{},", formattedDuration.toString());
+        return Str.format("#EXTINF:{},", formattedDuration.toString());
     }
 
     public String getFormattedLowerLine(String urlPrefix) {
-        return StringFormatter.format("{}?start_offset={}&end_offset={}",
+        return Str.format("{}?start_offset={}&end_offset={}",
                 urlPrefix + fileName, startOffset, endOffset);
     }
 

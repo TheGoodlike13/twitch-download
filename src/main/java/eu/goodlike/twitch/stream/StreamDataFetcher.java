@@ -1,7 +1,7 @@
 package eu.goodlike.twitch.stream;
 
-import eu.goodlike.okhttp.JsonCallback;
-import eu.goodlike.utils.StringFormatter;
+import eu.goodlike.libraries.okhttp.JacksonCallback;
+import eu.goodlike.neat.Str;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 public final class StreamDataFetcher {
 
     public CompletableFuture<StreamData> fetchStreamDataForVodId(int vodId) {
-        String finalUrl = StringFormatter.format(STREAM_URL, vodId);
+        String finalUrl = Str.format(STREAM_URL, vodId);
         System.out.println("Requesting stream data from: " + finalUrl);
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -18,7 +18,7 @@ public final class StreamDataFetcher {
                 .addHeader(TWITCH_CLIENT_ID_HEADER, TWITCH_CLIENT_ID)
                 .build();
 
-        return JsonCallback.asFuture(client.newCall(request), StreamData.class);
+        return JacksonCallback.asFuture(client.newCall(request), StreamData.class);
     }
 
     // CONSTRUCTORS
