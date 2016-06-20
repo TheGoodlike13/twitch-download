@@ -39,7 +39,7 @@ public final class VideoIdParser {
                 else {
                     String filename = args[i];
                     Path path = Paths.get(filename);
-                    if (!Files.exists(path))
+                    if (Files.notExists(path))
                         System.out.println("File not found: " + filename);
                     else if (!Files.isReadable(path))
                         System.out.println("File cannot be read: " + filename);

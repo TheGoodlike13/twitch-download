@@ -54,7 +54,7 @@ public final class CustomM3U8Parser implements AutoCloseable {
                 lastDuration = duration;
             } else if (lastFileName.equals(filename)) {
                 if (startOffset - lastEndOffset != 1)
-                    System.out.println("Potential frame issue fixed");
+                    System.out.println("Potential frame loss detected and adjusted for");
                 lastEndOffset = endOffset;
                 lastDuration += duration;
             } else {
