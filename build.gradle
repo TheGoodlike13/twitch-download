@@ -20,6 +20,9 @@ dependencies {
     // used for various utility methods
     compile 'com.google.guava:guava:19.0'
 
+    // used for command line argument parsing
+    compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
+
     // used for HTTP requests
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
