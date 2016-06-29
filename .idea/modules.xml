@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/twitch-download.iml" filepath="$PROJECT_DIR$/.idea/modules/twitch-download.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twitch-download_main.iml" filepath="$PROJECT_DIR$/.idea/modules/twitch-download_main.iml" group="twitch-download" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twitch-download_test.iml" filepath="$PROJECT_DIR$/.idea/modules/twitch-download_test.iml" group="twitch-download" />
     </modules>
   </component>
 </project>

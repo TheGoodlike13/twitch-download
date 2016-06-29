@@ -18,9 +18,5 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="twitch-download_main" target="1.8" />
-      <module name="twitch-download_test" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
