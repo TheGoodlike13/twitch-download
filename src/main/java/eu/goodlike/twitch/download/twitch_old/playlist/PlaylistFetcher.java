@@ -6,7 +6,7 @@ import eu.goodlike.libraries.okhttp.ResponseCallback;
 import eu.goodlike.str.Str;
 import eu.goodlike.twitch.download.twitch_old.m3u8.CustomM3U8Parser;
 import eu.goodlike.twitch.download.twitch_old.m3u8.StreamPart;
-import eu.goodlike.twitch.download.twitch_old.token.Token;
+import eu.goodlike.twitch.token.Token;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
