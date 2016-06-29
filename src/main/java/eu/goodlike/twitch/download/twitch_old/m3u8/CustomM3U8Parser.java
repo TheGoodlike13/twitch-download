@@ -1,4 +1,4 @@
-package eu.goodlike.twitch.m3u8;
+package eu.goodlike.twitch.download.twitch_old.m3u8;
 
 import java.io.InputStream;
 import java.util.ArrayList;

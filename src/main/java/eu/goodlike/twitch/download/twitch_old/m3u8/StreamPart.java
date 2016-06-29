@@ -1,7 +1,7 @@
-package eu.goodlike.twitch.m3u8;
+package eu.goodlike.twitch.download.twitch_old.m3u8;
 
 import com.google.common.base.MoreObjects;
-import eu.goodlike.neat.Str;
+import eu.goodlike.str.Str;
 
 import java.util.Objects;
 

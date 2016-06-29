@@ -1,4 +1,4 @@
-package eu.goodlike.twitch.token;
+package eu.goodlike.twitch.download.twitch_old.token;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

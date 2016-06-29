@@ -1,4 +1,4 @@
-package eu.goodlike;
+package eu.goodlike.twitch.download;
 
 import com.google.common.primitives.Ints;
 

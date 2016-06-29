@@ -1,7 +1,7 @@
-package eu.goodlike.twitch.stream;
+package eu.goodlike.twitch.download.twitch_old.stream;
 
 import eu.goodlike.libraries.okhttp.JacksonCallback;
-import eu.goodlike.neat.Str;
+import eu.goodlike.str.Str;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 

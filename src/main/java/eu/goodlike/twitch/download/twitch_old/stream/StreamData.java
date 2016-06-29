@@ -1,4 +1,4 @@
-package eu.goodlike.twitch.stream;
+package eu.goodlike.twitch.download.twitch_old.stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

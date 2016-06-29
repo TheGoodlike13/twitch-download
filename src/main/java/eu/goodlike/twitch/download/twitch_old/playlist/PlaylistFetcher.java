@@ -1,12 +1,12 @@
-package eu.goodlike.twitch.playlist;
+package eu.goodlike.twitch.download.twitch_old.playlist;
 
 import eu.goodlike.functional.Futures;
+import eu.goodlike.io.FileUtils;
 import eu.goodlike.libraries.okhttp.ResponseCallback;
-import eu.goodlike.misc.FileUtils;
-import eu.goodlike.neat.Str;
-import eu.goodlike.twitch.m3u8.CustomM3U8Parser;
-import eu.goodlike.twitch.m3u8.StreamPart;
-import eu.goodlike.twitch.token.Token;
+import eu.goodlike.str.Str;
+import eu.goodlike.twitch.download.twitch_old.m3u8.CustomM3U8Parser;
+import eu.goodlike.twitch.download.twitch_old.m3u8.StreamPart;
+import eu.goodlike.twitch.download.twitch_old.token.Token;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,7 +35,7 @@ public final class PlaylistFetcher {
         return ResponseCallback.asFuture(client.newCall(request))
                 .thenApply(Response::body)
                 .thenApply(ResponseBody::byteStream)
-                .thenCompose(this::handlePlaylistUrlResponse);
+                .thenCompose(response -> handlePlaylistUrlResponse(response, vodId));
     }
 
     // CONSTRUCTORS
@@ -48,7 +48,7 @@ public final class PlaylistFetcher {
 
     private final OkHttpClient client;
 
-    private CompletableFuture<File> handlePlaylistUrlResponse(InputStream response) {
+    private CompletableFuture<File> handlePlaylistUrlResponse(InputStream response, int vodId) {
         String streamSourcePlaylistUrl;
         try (CustomM3U8Parser parser = new CustomM3U8Parser(response)) {
             streamSourcePlaylistUrl = parser.getStreamSourcePlaylistUrl();
@@ -64,10 +64,10 @@ public final class PlaylistFetcher {
         return ResponseCallback.asFuture(client.newCall(request))
                 .thenApply(Response::body)
                 .thenApply(ResponseBody::byteStream)
-                .thenCompose(inputStream -> handlePlaylistFileResponse(inputStream, streamSourcePlaylistUrl));
+                .thenCompose(inputStream -> handlePlaylistFileResponse(inputStream, streamSourcePlaylistUrl, vodId));
     }
 
-    private CompletableFuture<File> handlePlaylistFileResponse(InputStream inputStream, String url) {
+    private CompletableFuture<File> handlePlaylistFileResponse(InputStream inputStream, String url, int vodId) {
         int finalDelimiter = url.lastIndexOf("/") + 1;
         String urlPrefix = url.substring(0, finalDelimiter);
         List<String> fileLines;
@@ -81,7 +81,7 @@ public final class PlaylistFetcher {
         } catch (Exception e) {
             return Futures.failedFuture(e);
         }
-        String filename = url.substring(finalDelimiter);
+        String filename = vodId + "-" + url.substring(finalDelimiter);
         Path path = Paths.get(FileUtils.findAvailableName(filename));
         try {
             Files.write(path, fileLines, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
