@@ -1,23 +1,24 @@
-package eu.goodlike;
+package eu.goodlike.twitch.download;
 
-import eu.goodlike.cmd.CommandLineRunner;
-import eu.goodlike.misc.FileUtils;
-import eu.goodlike.twitch.playlist.PlaylistFetcher;
-import eu.goodlike.twitch.stream.StreamData;
-import eu.goodlike.twitch.stream.StreamDataFetcher;
-import eu.goodlike.twitch.token.TokenFetcher;
-import okhttp3.OkHttpClient;
+import eu.goodlike.twitch.download.configurations.Policies;
+import eu.goodlike.twitch.download.configurations.options.CommandLineParser;
+import eu.goodlike.twitch.download.configurations.options.OptionsParser;
+import eu.goodlike.twitch.download.configurations.options.OptionsProvider;
+import eu.goodlike.twitch.download.configurations.settings.SettingsParser;
+import eu.goodlike.twitch.download.configurations.settings.SettingsProvider;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import static eu.goodlike.twitch.download.configurations.settings.DefaultSettings.DEFAULT_PROPERTIES_FILE_PATH;
 
 public final class TwitchVodDownloader {
 
     public static void main(String... args) {
-        VideoIdParser parser = VideoIdParser.parse(args);
+        SettingsProvider settingsProvider = SettingsParser.fromFile(DEFAULT_PROPERTIES_FILE_PATH);
+        CommandLineParser commandLineParser = CommandLineParser.newInstance(settingsProvider);
+        OptionsParser.from(commandLineParser, args)
+                .ifPresent(optionsProvider -> launchApplication(settingsProvider, optionsProvider));
+
+
+        /*VideoIdParser parser = VideoIdParser.parse(args);
         if (parser == null) {
             System.out.println("Please enter at least one VoD id/link (use -help to see allowed formats)");
             return;
@@ -52,7 +53,7 @@ public final class TwitchVodDownloader {
         }
         CompletableFuture<?>[] futures = listOfFutures.toArray(new CompletableFuture[listOfFutures.size()]);
         CompletableFuture.allOf(futures)
-                .whenComplete((any, ex) -> cleanup(client, commandLineRunner, cleanupFutures));
+                .whenComplete((any, ex) -> cleanup(client, commandLineRunner, cleanupFutures));*/
     }
 
     // PRIVATE
@@ -61,7 +62,37 @@ public final class TwitchVodDownloader {
         throw new AssertionError("Do not instantiate this class, it is only used for 'main' method!");
     }
 
-    private static Process ffmpegExecution(CommandLineRunner commandLineRunner, String playlistFilename, String outputFilename) {
+    private static void launchApplication(SettingsProvider settingsProvider, OptionsProvider optionsProvider) {
+        Policies policies = Policies.from(settingsProvider, optionsProvider);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*private static Process ffmpegExecution(CommandLineRunner commandLineRunner, String playlistFilename, String outputFilename) {
         return commandLineRunner.execute("ffmpeg",
                 "-i", inQuotes(playlistFilename),
                 "-bsf:a", "aac_adtstoasc",
@@ -89,6 +120,6 @@ public final class TwitchVodDownloader {
             throw new RuntimeException("Closing command line runner interrupted!", e);
         }
         leftoverFiles.forEach(future -> future.thenAccept(File::delete));
-    }
+    }*/
 
 }

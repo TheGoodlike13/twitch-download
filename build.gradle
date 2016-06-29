@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     // I DID IT! PRAISE THE REPOSITORY!
-    compile 'eu.goodlike:goodlike-utils:0.0.3'
+    compile 'eu.goodlike:goodlike-utils:0.0.11'
 
     // used for various utility methods
     compile 'com.google.guava:guava:19.0'
@@ -49,7 +49,6 @@ tasks.withType(JavaCompile) {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'eu.goodlike.TwitchVodDownloader'
-        attributes "Class-Path": configurations.compile.collect { 'lib\\' + it.getName() }.join(' ')
+        attributes 'Main-Class': 'eu.goodlike.twitch.download.TwitchVodDownloader'
     }
 }
