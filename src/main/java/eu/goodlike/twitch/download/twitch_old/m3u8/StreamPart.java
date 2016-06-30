@@ -1,6 +1,7 @@
 package eu.goodlike.twitch.download.twitch_old.m3u8;
 
 import com.google.common.base.MoreObjects;
+import eu.goodlike.neat.Null;
 import eu.goodlike.str.Str;
 
 import java.util.Objects;
@@ -25,6 +26,8 @@ public final class StreamPart {
     // CONSTRUCTORS
 
     public StreamPart(String fileName, int startOffset, int endOffset, int exactDurationInMillis) {
+        Null.check(fileName).ifAny("File name cannot be null");
+
         this.fileName = fileName;
         this.startOffset = startOffset;
         this.endOffset = endOffset;
