@@ -41,7 +41,7 @@ public final class LogPolicy {
             debugLoggers.add(CustomizedLoggers.forConsole());
 
         if (optionsProvider.isProcessOutputEnabled())
-            debugLoggers.add(CustomizedLoggers.forConsole());
+            processLoggers.add(CustomizedLoggers.forConsole());
 
         Optional<CustomizedLogger> fileLogger = optionsProvider.getLogFileLocation()
                 .map(CustomizedLoggers::forFile);
