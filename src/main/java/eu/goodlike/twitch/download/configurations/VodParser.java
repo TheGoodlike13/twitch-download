@@ -6,6 +6,8 @@ import eu.goodlike.io.log.CustomizedLogger;
 import eu.goodlike.neat.Null;
 import eu.goodlike.twitch.download.configurations.options.OptionsProvider;
 import eu.goodlike.twitch.download.configurations.policy.LogPolicy;
+import eu.goodlike.validate.Validate;
+import eu.goodlike.validate.impl.StringValidator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +23,7 @@ public final class VodParser {
     /**
      * @return set of actual VoD ids that are result of parsing all VoD ids given to the parser
      */
-    public Set<String> getVodIds() {
+    public Set<Integer> getVodIds() {
         return getVodIds(new LinkedHashSet<>(), new HashSet<>());
     }
 
@@ -45,7 +47,7 @@ public final class VodParser {
     private final List<String> vodIds;
     private final CustomizedLogger debugLogger;
 
-    private Set<String> getVodIds(Set<String> parsedIds, Set<Path> visitedPaths) {
+    private Set<Integer> getVodIds(Set<Integer> parsedIds, Set<Path> visitedPaths) {
         for (String vodId : vodIds)
             parseVodId(vodId)
                     .ifFirstKind(parsedIds::add)
@@ -68,11 +70,10 @@ public final class VodParser {
         return Collections.emptyList();
     }
 
-    private static Either<String, Path> parseVodId(String vodId) {
+    private Either<Integer, Path> parseVodId(String vodId) {
         if (vodId.startsWith("http")) {
             int idStartIndex = vodId.lastIndexOf('/') + 1;
-            return Either.<String, Path>ofFirstKind(vodId.substring(idStartIndex))
-                    .filterFirstKind(id -> !id.isEmpty());
+            return parseIntegerId(vodId.substring(idStartIndex));
         }
 
         Optional<Path> path = FileUtils.getPath(vodId)
@@ -84,7 +85,22 @@ public final class VodParser {
         if (vodId.startsWith("v"))
             vodId = vodId.substring(1);
 
-        return Either.ofFirstKind(vodId);
+        return parseIntegerId(vodId);
     }
+
+    private Either<Integer, Path> parseIntegerId(String vodId) {
+        if (VOD_ID_VALIDATOR.isValid(vodId)) {
+            int id = Integer.parseInt(vodId);
+            if (id > 0)
+                return Either.ofFirstKind(id);
+        }
+        debugLogger.logMessage("Invalid VoD id: " + vodId);
+        return Either.neither();
+    }
+
+    private static final StringValidator VOD_ID_VALIDATOR = Validate.string()
+            .not().isNull()
+            .not().isBlank()
+            .isInteger();
 
 }

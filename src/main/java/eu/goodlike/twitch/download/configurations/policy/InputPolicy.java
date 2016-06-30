@@ -15,7 +15,7 @@ public final class InputPolicy {
     /**
      * @return list of vod ids to download
      */
-    public Set<String> getVodIds() {
+    public Set<Integer> getVodIds() {
         return vodIds;
     }
 
@@ -30,7 +30,7 @@ public final class InputPolicy {
         return new InputPolicy(vodParser.getVodIds());
     }
 
-    public InputPolicy(Set<String> vodIds) {
+    public InputPolicy(Set<Integer> vodIds) {
         Null.checkCollection(vodIds).ifAny("Vod id list cannot be null");
 
         this.vodIds = ImmutableSet.copyOf(vodIds);
@@ -38,6 +38,6 @@ public final class InputPolicy {
 
     // PRIVATE
 
-    private final Set<String> vodIds;
+    private final Set<Integer> vodIds;
 
 }
