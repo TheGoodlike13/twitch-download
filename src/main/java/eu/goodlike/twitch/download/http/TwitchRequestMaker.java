@@ -2,11 +2,13 @@ package eu.goodlike.twitch.download.http;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import eu.goodlike.libraries.okhttp.JacksonCallback;
+import eu.goodlike.libraries.okhttp.ResponseCallback;
 import eu.goodlike.neat.Null;
 import eu.goodlike.twitch.download.configurations.policy.HttpRequestPolicy;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,6 +18,15 @@ import static eu.goodlike.twitch.TwitchDefaults.*;
  * Makes HTTP request to twitch
  */
 public final class TwitchRequestMaker {
+
+    /**
+     * @return result of making http request to given httpUrl
+     * @throws NullPointerException if httpUrl is null
+     */
+    public CompletableFuture<Response> makeRawRequest(HttpUrl httpUrl) {
+        Null.check(httpUrl).ifAny("Http url cannot be null");
+        return ResponseCallback.asFuture(client.newCall(buildRequest(httpUrl)));
+    }
 
     /**
      * @return result of parsing JSON from given httpUrl as given class
