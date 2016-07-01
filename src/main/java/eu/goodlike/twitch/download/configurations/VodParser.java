@@ -6,13 +6,13 @@ import eu.goodlike.io.log.CustomizedLogger;
 import eu.goodlike.neat.Null;
 import eu.goodlike.twitch.download.configurations.options.OptionsProvider;
 import eu.goodlike.twitch.download.configurations.policy.LogPolicy;
-import eu.goodlike.validate.Validate;
-import eu.goodlike.validate.impl.StringValidator;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+
+import static eu.goodlike.UsefulValidators.INTEGER_STRING_VALIDATOR;
 
 /**
  * Parses actual VoD ids from given VoD ids; the given ids can be http links, files to ids, or actual ids (with or
@@ -51,8 +51,7 @@ public final class VodParser {
         for (String vodId : vodIds)
             parseVodId(vodId)
                     .ifFirstKind(parsedIds::add)
-                    .filterSecondKind(o -> !visitedPaths.contains(o))
-                    .ifSecondKind(visitedPaths::add)
+                    .filterSecondKind(visitedPaths::add)
                     .mapSecondKind(this::parseFile)
                     .mapSecondKind(ids -> new VodParser(ids, debugLogger))
                     .mapSecondKind(parser -> parser.getVodIds(parsedIds, visitedPaths))
@@ -89,7 +88,7 @@ public final class VodParser {
     }
 
     private Either<Integer, Path> parseIntegerId(String vodId) {
-        if (VOD_ID_VALIDATOR.isValid(vodId)) {
+        if (INTEGER_STRING_VALIDATOR.isValid(vodId)) {
             int id = Integer.parseInt(vodId);
             if (id > 0)
                 return Either.ofFirstKind(id);
@@ -97,10 +96,5 @@ public final class VodParser {
         debugLogger.logMessage("Invalid VoD id: " + vodId);
         return Either.neither();
     }
-
-    private static final StringValidator VOD_ID_VALIDATOR = Validate.string()
-            .not().isNull()
-            .not().isBlank()
-            .isInteger();
 
 }
