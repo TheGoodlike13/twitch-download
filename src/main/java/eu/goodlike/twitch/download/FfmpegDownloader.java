@@ -107,10 +107,7 @@ public final class FfmpegDownloader {
     private final TwitchM3U8WriterFactory twitchM3U8WriterFactory;
 
     private String getInputName(String outputName) {
-        String name = com.google.common.io.Files.getNameWithoutExtension(outputName);
-        String extension = com.google.common.io.Files.getFileExtension(outputName);
-        String inputName = name + " playlist";
-        return extension.isEmpty() ? inputName : inputName + "." + extension;
+        return com.google.common.io.Files.getNameWithoutExtension(outputName) + ".m3u8";
     }
 
     private List<String> getFfmpegArguments(List<String> ffmpegOptions, String inputFileLocation, String outputFileLocation) {
