@@ -3,7 +3,6 @@ package eu.goodlike.twitch;
 import eu.goodlike.functional.Futures;
 import eu.goodlike.io.log.CustomizedLogger;
 
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -26,7 +25,9 @@ public final class CompletableFutureErrorHandler implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        handledExceptions.clear();
+        synchronized (lock) {
+            handledExceptions.clear();
+        }
     }
 
     // CONSTRUCTORS
@@ -34,7 +35,7 @@ public final class CompletableFutureErrorHandler implements AutoCloseable {
     public CompletableFutureErrorHandler(CustomizedLogger debugLogger) {
         this.debugLogger = debugLogger;
 
-        this.handledExceptions = Collections.synchronizedSet(new IdentityHashMap<Throwable, Object>().keySet());
+        this.handledExceptions = new IdentityHashMap<Throwable, Object>().keySet();
     }
 
     // PRIVATE
@@ -42,9 +43,13 @@ public final class CompletableFutureErrorHandler implements AutoCloseable {
     private final Set<Throwable> handledExceptions;
     private final CustomizedLogger debugLogger;
 
+    private final Object lock = new Object();
+
     private void handleErrorJustOnce(Throwable error, String errorMessage) {
-        if (handledExceptions.add(error))
-            debugLogger.logMessage(errorMessage);
+        synchronized (lock) {
+            if (handledExceptions.add(error))
+                debugLogger.logMessage(errorMessage);
+        }
     }
 
 }
