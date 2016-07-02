@@ -24,7 +24,7 @@ public final class TwitchStreamPart {
      */
     public boolean canBeAppendedTo(TwitchStreamPart other) {
         return this.location.equals(other.location)
-                && this.startOffset == other.endOffset;
+                && this.startOffset == other.endOffset + 1;
     }
 
     /**
