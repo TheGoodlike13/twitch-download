@@ -8,7 +8,6 @@ import eu.goodlike.twitch.download.configurations.policy.PlaylistPolicy;
 import eu.goodlike.twitch.stream.StreamDataFetcher;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Resolves the output filename from twitch stream data
@@ -44,10 +43,24 @@ public final class FilenameResolver {
     private final PlaylistPolicy playlistPolicy;
 
     private String replaceForbiddenCharacters(String string) {
-        return FORBIDDEN_CHARACTERS.matcher(string).replaceAll("_");
+        StringBuilder builder = new StringBuilder(string.length());
+        for (char c : string.toCharArray())
+            if (isAllowedChar(c))
+                builder.append(c);
+            else
+                builder.append('_');
+
+        return builder.toString();
     }
 
-    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile("(?![A-Za-z0-9 ,'_+!@#$%^&();=\\-\\.]).");
+    private boolean isAllowedChar(char c) {
+        return (c >= 'A' && c <= 'Z')
+                || (c >= 'a' && c <= 'z')
+                || (c >= '0' && c <= '9')
+                || c == ' ' || c == ',' || c == '\'' || c == '_' || c == '+' || c == '!' || c == '@' || c == '#'
+                || c == '$' || c == '%' || c == '^' || c == '&' || c == '(' || c == ')' || c == ';' || c == '='
+                || c == '-' || c == '.';
+    }
 
     private static final class LazyJsonTraversableOverride implements Traversable {
         @Override
