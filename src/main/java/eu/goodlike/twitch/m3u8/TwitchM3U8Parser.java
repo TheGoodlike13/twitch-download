@@ -4,12 +4,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import eu.goodlike.io.log.CustomizedLogger;
 import eu.goodlike.neat.Null;
+import eu.goodlike.str.Str;
 import eu.goodlike.twitch.download.configurations.policy.PlaylistPolicy;
 import eu.goodlike.twitch.m3u8.master.MasterPlaylist;
 import eu.goodlike.twitch.m3u8.media.MediaPlaylist;
 import eu.goodlike.twitch.m3u8.media.TwitchStreamPart;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -79,13 +81,13 @@ public final class TwitchM3U8Parser implements AutoCloseable {
             line = skipUntil(nextLine -> nextLine.startsWith(M3U8_MEDIA_PREFIX));
             if (line != null) {
                 line = line.substring(M3U8_MEDIA_PREFIX.length());
-                String[] parts = line.split(",");
-                if (parts.length != 2)
+                List<String> parts = Str.splitIncludingEmptyAffixes(line, ",");
+                if (parts.size() != 2)
                     return logFailure("Invalid m3u8 segment tag: "  + M3U8_MEDIA_PREFIX +
                             " should have one and only one ',' to separate duration and (optional) name");
 
-                String durationString = parts[0];
-                String name = parts[1];
+                String durationString = parts.get(0);
+                String name = parts.get(1);
 
                 BigDecimal duration;
                 try {
