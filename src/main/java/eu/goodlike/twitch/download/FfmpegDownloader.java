@@ -37,18 +37,19 @@ public final class FfmpegDownloader {
     public CompletableFuture<?> download(MediaPlaylist mediaPlaylist, int vodId) {
         Null.check(mediaPlaylist).ifAny("Media playlist cannot be null");
 
-        String outputFile = outputPolicy.getOutputFormat();
-        Optional<String> outputName = filenameResolver.resolveOutputName(outputFile, vodId)
+        String outputFileFormat = outputPolicy.getOutputFormat();
+        Optional<String> outputNameOptional = filenameResolver.resolveOutputName(outputFileFormat, vodId)
                 .map(FileUtils::findAvailableName);
-        if (!outputName.isPresent()) {
-            debugLogger.logMessage("Cannot resolve name for output file: " + outputFile);
+        if (!outputNameOptional.isPresent()) {
+            debugLogger.logMessage("Cannot resolve name for output file: " + outputFileFormat);
             return CompletableFuture.completedFuture(null);
         }
+        String outputName = outputNameOptional.get();
 
-        Optional<Path> pathOptional = outputName.flatMap(FileUtils::getPath)
+        Optional<Path> pathOptional = FileUtils.getPath(outputFileFormat)
                 .map(Path::normalize);
         if (!pathOptional.isPresent()) {
-            outputName
+            outputNameOptional
                     .ifPresent(name -> debugLogger.logMessage("Output file is not a valid path: " + name));
             return CompletableFuture.completedFuture(null);
         }
@@ -62,7 +63,7 @@ public final class FfmpegDownloader {
         }
         CompletableFuture<File> fileFuture = Futures.fromOptional(fileOptional, () -> null);
 
-        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), path.toString(), outputFile);
+        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), path.toString(), outputName);
         Optional<Process> processOptional = commandLineRunner.execute(commandLineArguments);
         if (!processOptional.isPresent())
             debugLogger.logMessage("Couldn't execute process: " + commandLineArguments.stream().collect(Collectors.joining(" ")));

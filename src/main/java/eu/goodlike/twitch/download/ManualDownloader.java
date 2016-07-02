@@ -33,11 +33,11 @@ public final class ManualDownloader {
     public CompletableFuture<?> download(MediaPlaylist mediaPlaylist, int vodId) {
         Null.check(mediaPlaylist).ifAny("Media playlist cannot be null");
 
-        String outputFolder = outputPolicy.getOutputFolderFormat();
-        Optional<String> outputName = filenameResolver.resolveOutputName(outputFolder, vodId)
+        String outputFolderFormat = outputPolicy.getOutputFolderFormat();
+        Optional<String> outputName = filenameResolver.resolveOutputName(outputFolderFormat, vodId)
                 .map(FileUtils::findAvailableName);
         if (!outputName.isPresent()) {
-            debugLogger.logMessage("Cannot resolve name for output folder: " + outputFolder);
+            debugLogger.logMessage("Cannot resolve name for output folder: " + outputFolderFormat);
             return CompletableFuture.completedFuture(null);
         }
 
