@@ -61,7 +61,11 @@ public final class Explanations {
             "adjust default ffmpeg commands" + System.lineSeparator() +
                     "If you are going to use ffmpeg, the options passed into it can be specified in " +
                     "twitch-download.properties. However, you may want to override or append additional " +
-                    "options (i.e. cutting). Use this option to define these ffmpeg options.";
+                    "options (i.e. cutting). Use this option to define these ffmpeg options. WARNING! if " +
+                    "the options you want to use start with an '-', make sure to put the options in " +
+                    "quotes, even if there are no spaces, and add a space before the first '-'. If you " +
+                    "do not do this, the parser will treat your options as passed into the application, " +
+                    "rather than ffmpeg, and fail, claiming no OPTIONS were given.";
 
     public static final String CUSTOM_QUALITY_EXPLANATION =
             "custom quality level" + System.lineSeparator() +
