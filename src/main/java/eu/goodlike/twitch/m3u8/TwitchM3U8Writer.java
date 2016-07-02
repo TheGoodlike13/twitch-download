@@ -10,8 +10,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static eu.goodlike.twitch.m3u8.M3U8Defaults.M3U8_FILE_START;
-import static eu.goodlike.twitch.m3u8.M3U8Defaults.M3U8_MASTER_TARGET_DURATION_TAG_PREFIX;
+import static eu.goodlike.twitch.m3u8.M3U8Defaults.*;
 
 /**
  * <pre>
@@ -35,11 +34,14 @@ public final class TwitchM3U8Writer {
 
         try (FileAppender fileAppender = fileAppenderOptional.get()) {
             fileAppender.appendLine(M3U8_FILE_START);
-            fileAppender.appendLine(M3U8_MASTER_TARGET_DURATION_TAG_PREFIX + mediaPlaylist.getTargetDuration());
+            fileAppender.appendLine("");
+            fileAppender.appendLine(M3U8_MEDIA_TARGET_DURATION_TAG_PREFIX + mediaPlaylist.getTargetDuration());
             fileAppender.appendLine("");
             for (TwitchStreamPart part : mediaPlaylist.getStreamParts())
                 fileAppender.appendLine(part.getMediaPlaylistString());
 
+            fileAppender.appendLine("");
+            fileAppender.appendLine(M3U8_MEDIA_END_OF_FILE);
             fileAppender.appendLine("");
         } catch (Exception e) {
             return logFailure("Unexpected exception while writing media playlist file at: " + path);
