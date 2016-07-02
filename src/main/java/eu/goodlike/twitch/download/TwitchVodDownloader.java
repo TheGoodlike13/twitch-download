@@ -59,6 +59,7 @@ public final class TwitchVodDownloader {
 
         OkHttpClient okHttpClient = HttpClients.newInstance();
         CompletableFutureErrorHandler errorHandler = new CompletableFutureErrorHandler(debugLogger);
+
         TwitchRequestMaker twitchRequestMaker = new TwitchRequestMaker(httpRequestPolicy, okHttpClient);
         TwitchM3U8ParserFactory twitchM3U8ParserFactory = new TwitchM3U8ParserFactory(debugLogger, playlistPolicy);
         TwitchM3U8WriterFactory twitchM3U8WriterFactory = new TwitchM3U8WriterFactory(debugLogger);
@@ -95,7 +96,8 @@ public final class TwitchVodDownloader {
         CompletableFuture<?>[] futures = downloadFutures.toArray(new CompletableFuture[downloadFutures.size()]);
         CompletableFuture.allOf(futures)
                 .whenComplete((any, ex) -> HttpClients.close(okHttpClient))
-                .whenComplete((any, ex) -> close(commandLineRunner));
+                .whenComplete((any, ex) -> close(commandLineRunner))
+                .whenComplete((any, ex) -> close(errorHandler));
     }
 
     private static void close(CommandLineRunner commandLineRunner) {
@@ -103,6 +105,14 @@ public final class TwitchVodDownloader {
             commandLineRunner.close();
         } catch (Exception e) {
             throw new RuntimeException("Unexpected failure while closing CommandLineRunner", e);
+        }
+    }
+
+    private static void close(CompletableFutureErrorHandler errorHandler) {
+        try {
+            errorHandler.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected failure while closing CompletableFutureErrorHandler", e);
         }
     }
 

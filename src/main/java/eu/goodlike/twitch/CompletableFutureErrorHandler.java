@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 /**
  * Handler for CompletableFuture errors, avoids unnecessary error messages for errors that have already occurred
  */
-public final class CompletableFutureErrorHandler {
+public final class CompletableFutureErrorHandler implements AutoCloseable {
 
     /**
      * @return BiConsumer to be used in a whenComplete() of a CompletableFuture; this consumer ensures that error
@@ -22,6 +22,11 @@ public final class CompletableFutureErrorHandler {
                 any -> {},
                 throwable -> handleErrorJustOnce(throwable, errorMessage)
         );
+    }
+
+    @Override
+    public void close() throws Exception {
+        handledExceptions.clear();
     }
 
     // CONSTRUCTORS
