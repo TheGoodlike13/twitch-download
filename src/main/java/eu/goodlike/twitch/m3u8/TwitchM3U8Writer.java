@@ -4,7 +4,7 @@ import eu.goodlike.io.FileAppender;
 import eu.goodlike.io.log.CustomizedLogger;
 import eu.goodlike.neat.Null;
 import eu.goodlike.twitch.m3u8.media.MediaPlaylist;
-import eu.goodlike.twitch.m3u8.media.TwitchStreamPart;
+import eu.goodlike.twitch.m3u8.media.StreamPart;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public final class TwitchM3U8Writer {
             fileAppender.appendLine("");
             fileAppender.appendLine(M3U8_MEDIA_TARGET_DURATION_TAG_PREFIX + mediaPlaylist.getTargetDuration());
             fileAppender.appendLine("");
-            for (TwitchStreamPart part : mediaPlaylist.getStreamParts())
+            for (StreamPart part : mediaPlaylist.getStreamParts())
                 fileAppender.appendLine(part.getMediaPlaylistString());
 
             fileAppender.appendLine("");

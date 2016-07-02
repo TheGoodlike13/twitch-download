@@ -19,7 +19,7 @@ public final class MediaPlaylist {
     /**
      * @return list of stream VoD parts
      */
-    public List<TwitchStreamPart> getStreamParts() {
+    public List<StreamPart> getStreamParts() {
         return streamParts;
     }
 
@@ -40,7 +40,7 @@ public final class MediaPlaylist {
      */
     public BigInteger getTargetDuration() {
         return streamParts.stream()
-                .map(TwitchStreamPart::getDuration)
+                .map(StreamPart::getDuration)
                 .max(BigDecimal::compareTo)
                 .map(BigDecimal::toBigInteger)
                 .map(big -> big.add(ONE))
@@ -49,13 +49,13 @@ public final class MediaPlaylist {
 
     // CONSTRUCTORS
 
-    public MediaPlaylist(List<TwitchStreamPart> streamParts) {
+    public MediaPlaylist(List<StreamPart> streamParts) {
         Null.checkList(streamParts).ifAny("Stream sources cannot be null");
         this.streamParts = ImmutableList.copyOf(streamParts);
     }
 
     // PRIVATE
 
-    private final List<TwitchStreamPart> streamParts;
+    private final List<StreamPart> streamParts;
 
 }

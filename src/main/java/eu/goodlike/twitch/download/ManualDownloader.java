@@ -7,7 +7,7 @@ import eu.goodlike.twitch.CompletableFutureErrorHandler;
 import eu.goodlike.twitch.download.configurations.policy.OutputPolicy;
 import eu.goodlike.twitch.download.http.filename.FilenameResolver;
 import eu.goodlike.twitch.m3u8.media.MediaPlaylist;
-import eu.goodlike.twitch.m3u8.media.TwitchStreamPart;
+import eu.goodlike.twitch.m3u8.media.StreamPart;
 import eu.goodlike.twitch.vod.VideoDownloader;
 import okhttp3.HttpUrl;
 
@@ -85,7 +85,7 @@ public final class ManualDownloader {
 
     private CompletableFuture<?> downloadFilesInto(Path folder, MediaPlaylist mediaPlaylist) {
         List<CompletableFuture<File>> processes = new ArrayList<>();
-        for (TwitchStreamPart part : mediaPlaylist.getStreamParts()) {
+        for (StreamPart part : mediaPlaylist.getStreamParts()) {
             Optional<HttpUrl> locationUrlOptional = part.getLocationUrl();
             if (!locationUrlOptional.isPresent()) {
                 debugLogger.logMessage("Stream segment is not a valid url: " + part.getFullLocation());

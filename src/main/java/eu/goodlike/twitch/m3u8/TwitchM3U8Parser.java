@@ -7,8 +7,10 @@ import eu.goodlike.neat.Null;
 import eu.goodlike.str.Str;
 import eu.goodlike.twitch.download.configurations.policy.PlaylistPolicy;
 import eu.goodlike.twitch.m3u8.master.MasterPlaylist;
+import eu.goodlike.twitch.m3u8.media.AppendableStreamPart;
 import eu.goodlike.twitch.m3u8.media.MediaPlaylist;
-import eu.goodlike.twitch.m3u8.media.TwitchStreamPart;
+import eu.goodlike.twitch.m3u8.media.SimpleStreamPart;
+import eu.goodlike.twitch.m3u8.media.StreamPart;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -75,8 +77,8 @@ public final class TwitchM3U8Parser implements AutoCloseable {
         if (!M3U8_FILE_START.equals(line))
             return logFailure("Invalid file start, expected: " + M3U8_FILE_START + ", found: " + line);
 
-        ImmutableList.Builder<TwitchStreamPart> builder = ImmutableList.builder();
-        TwitchStreamPart lastPart = null;
+        ImmutableList.Builder<StreamPart> builder = ImmutableList.builder();
+        StreamPart lastPart = null;
         while (scanner.hasNextLine()) {
             line = skipUntil(nextLine -> nextLine.startsWith(M3U8_MEDIA_PREFIX));
             if (line != null) {
@@ -108,15 +110,18 @@ public final class TwitchM3U8Parser implements AutoCloseable {
                 if (location == null)
                     return logFailure("Location could not be parsed from stream segment link: " + line);
 
+                StreamPart part;
                 Integer startOffset = resolver.getStartOffset();
                 if (startOffset == null)
-                    return logFailure("Start offset could not be parsed from stream segment link: " + line);
+                    part = new SimpleStreamPart(duration, location, name, null);
+                else {
+                    Integer endOffset = resolver.getEndOffset();
+                    if (endOffset == null)
+                        return logFailure("End offset could not be parsed from stream segment link: " + line);
 
-                Integer endOffset = resolver.getEndOffset();
-                if (endOffset == null)
-                    return logFailure("End offset could not be parsed from stream segment link: " + line);
+                    part = new AppendableStreamPart(duration, location, startOffset, endOffset, name, null);
+                }
 
-                TwitchStreamPart part = new TwitchStreamPart(duration, location, startOffset, endOffset, name, null);
                 if (lastPart == null)
                     lastPart = part;
                 else if (playlistPolicy.isCombinePlaylistPartsEnabled() && part.canBeAppendedTo(lastPart))

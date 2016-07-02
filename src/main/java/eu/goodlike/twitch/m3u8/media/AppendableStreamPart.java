@@ -12,93 +12,86 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
 
-import static eu.goodlike.twitch.TwitchDefaults.*;
+import static eu.goodlike.twitch.TwitchDefaults.END_OFFSET_PARAM;
+import static eu.goodlike.twitch.TwitchDefaults.START_OFFSET_PARAM;
+import static eu.goodlike.twitch.m3u8.M3U8Defaults.TWITCH_M3U8_MEDIA_TAG_FORMAT;
 
 /**
  * Represents one part of a twitch stream VoD
  */
-public final class TwitchStreamPart {
+public final class AppendableStreamPart implements StreamPart {
 
-    /**
-     * @return location of this stream part, without offsets
-     */
+    @Override
     public String getLocation() {
         return location;
     }
 
-    /**
-     * @return duration of this stream part
-     */
+    @Override
     public BigDecimal getDuration() {
         return duration;
     }
 
-    /**
-     * @return true if this twitch stream part is from the same file and follows the other part immediately
-     */
-    public boolean canBeAppendedTo(TwitchStreamPart other) {
-        return this.location.equals(other.location)
-                && this.startOffset == other.endOffset + 1;
+    @Override
+    public boolean canBeAppendedTo(StreamPart other) {
+        Null.check(other).ifAny("Stream part cannot be null");
+        if (!(other instanceof AppendableStreamPart))
+            return false;
+
+        AppendableStreamPart appendableStreamPart = (AppendableStreamPart) other;
+        return this.location.equals(appendableStreamPart.location)
+                && this.startOffset == appendableStreamPart.endOffset + 1;
     }
 
-    /**
-     * @return appends this twitch part to the given one
-     * @throws IllegalArgumentException if these parts come from different files
-     * @throws IllegalArgumentException if this part is supposed to come before the other part, not after
-     */
-    public TwitchStreamPart appendTo(TwitchStreamPart other) {
-        if (!this.location.equals(other.location))
+    @Override
+    public StreamPart appendTo(StreamPart other) {
+        Null.check(other).ifAny("Stream part cannot be null");
+        if (!(other instanceof AppendableStreamPart))
+            throw new IllegalArgumentException("These parts cannot be appended forcibly: " +
+                    "given stream part is not an appendable stream part");
+
+        AppendableStreamPart appendableStreamPart = (AppendableStreamPart) other;
+        if (!this.location.equals(appendableStreamPart.location))
             throw new IllegalArgumentException("These parts cannot be appended forcibly: " +
                     "stream part location mismatch");
 
-        if (this.endOffset < other.startOffset)
+        if (this.endOffset < appendableStreamPart.startOffset)
             throw new IllegalArgumentException("These parts cannot be appended forcibly: " +
                     "this stream part end before the other begins");
 
-        return new TwitchStreamPart(other.duration.add(this.duration), other.location,
-                other.startOffset, this.endOffset, combineNames(other.name, this.name),
-                other.locationPrefix == null ? this.locationPrefix : other.locationPrefix);
+        return new AppendableStreamPart(appendableStreamPart.duration.add(this.duration), appendableStreamPart.location,
+                appendableStreamPart.startOffset, this.endOffset, combineNames(appendableStreamPart.name, this.name),
+                appendableStreamPart.locationPrefix == null ? this.locationPrefix : appendableStreamPart.locationPrefix);
     }
 
-    /**
-     * @return String representation of this stream part in an m3u8 file
-     */
+    @Override
     public String getMediaPlaylistString() {
-        return Str.format(TWITCH_M3U8_MEDIA_PART_FORMAT,
+        return Str.format(MEDIA_STRING_FORMAT,
                 duration, name, locationPrefix, location, startOffset, endOffset);
     }
 
-    /**
-     * @return this TwitchStreamPart with a location prefix prepended
-     */
-    public TwitchStreamPart setLocationPrefix(String locationPrefix) {
-        return new TwitchStreamPart(duration, location, startOffset, endOffset, name, locationPrefix);
+    @Override
+    public StreamPart setLocationPrefix(String locationPrefix) {
+        return new AppendableStreamPart(duration, location, startOffset, endOffset, name, locationPrefix);
     }
 
-    /**
-     * @return location String, without the locationPrefix
-     */
+    @Override
     public String getAbsoluteLocation() {
-        return Str.format(TWITCH_M3U8_MEDIA_LOCATION_FORMAT, location, startOffset, endOffset);
+        return Str.format(LOCATION_FORMAT, location, startOffset, endOffset);
     }
 
-    /**
-     * @return location String, including locationPrefix
-     */
+    @Override
     public String getFullLocation() {
-        return Str.format(TWITCH_M3U8_MEDIA_FULL_LOCATION_FORMAT, locationPrefix, location, startOffset, endOffset);
+        return Str.format(FULL_LOCATION_FORMAT, locationPrefix, location, startOffset, endOffset);
     }
 
-    /**
-     * @return HttpUrl of this stream segment location, Optional:;empty if it is not a valid http url
-     */
+    @Override
     public Optional<HttpUrl> getLocationUrl() {
         return HttpUrls.parse(getFullLocation());
     }
 
     // CONSTRUCTORS
 
-    public TwitchStreamPart(BigDecimal duration, String location, int startOffset, int endOffset, String name, String locationPrefix) {
+    public AppendableStreamPart(BigDecimal duration, String location, int startOffset, int endOffset, String name, String locationPrefix) {
         Null.check(duration, location).ifAny("Duration and location cannot be null");
 
         Validate.bigDecimal().not().isNegative().ifInvalid(duration)
@@ -136,6 +129,14 @@ public final class TwitchStreamPart {
                 : second.contains(first) ? second : first + " " + second;
     }
 
+    private static final String LOCATION_FORMAT =
+            "{}?" + START_OFFSET_PARAM + "={}&" + END_OFFSET_PARAM + "={}";
+
+    private static final String FULL_LOCATION_FORMAT = "{}" + LOCATION_FORMAT;
+
+    private static final String MEDIA_STRING_FORMAT = TWITCH_M3U8_MEDIA_TAG_FORMAT
+            + System.lineSeparator() + FULL_LOCATION_FORMAT;
+
     // OBJECT OVERRIDES
 
     @Override
@@ -153,8 +154,8 @@ public final class TwitchStreamPart {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TwitchStreamPart)) return false;
-        TwitchStreamPart that = (TwitchStreamPart) o;
+        if (!(o instanceof AppendableStreamPart)) return false;
+        AppendableStreamPart that = (AppendableStreamPart) o;
         return Objects.equals(startOffset, that.startOffset) &&
                 Objects.equals(endOffset, that.endOffset) &&
                 BigDecimals.equalsIgnoreScale(duration, that.duration) &&
