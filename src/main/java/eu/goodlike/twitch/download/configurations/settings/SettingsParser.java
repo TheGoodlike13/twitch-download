@@ -87,7 +87,8 @@ public final class SettingsParser implements SettingsProvider {
     private final Map<String, String> properties;
 
     private Optional<String> getValue(String key) {
-        return Optional.ofNullable(properties.get(key));
+        return Optional.ofNullable(properties.get(key))
+                .filter(value -> !value.isEmpty());
     }
 
     private static final String APPLICATION_NAME_KEY = "app_name";
