@@ -44,10 +44,10 @@ public final class FilenameResolver {
     private final PlaylistPolicy playlistPolicy;
 
     private String replaceForbiddenCharacters(String string) {
-        return "";
+        return FORBIDDEN_CHARACTERS.matcher(string).replaceAll("_");
     }
 
-    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile(""); // TODO find pattern
+    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile("(?![A-Za-z0-9 ,'_+!@#$%^&();=\\-\\.]).");
 
     private static final class LazyJsonTraversableOverride implements Traversable {
         @Override
