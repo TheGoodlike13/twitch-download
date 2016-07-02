@@ -46,7 +46,8 @@ public final class FfmpegDownloader {
         }
         String outputName = outputNameOptional.get();
 
-        Optional<Path> pathOptional = FileUtils.getPath(outputFileFormat)
+        String inputName = getInputName(outputName);
+        Optional<Path> pathOptional = FileUtils.getPath(inputName)
                 .map(Path::normalize);
         if (!pathOptional.isPresent()) {
             outputNameOptional
@@ -63,7 +64,7 @@ public final class FfmpegDownloader {
         }
         CompletableFuture<File> fileFuture = Futures.fromOptional(fileOptional, () -> null);
 
-        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), path.toString(), outputName);
+        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), outputName, outputName);
         Optional<Process> processOptional = commandLineRunner.execute(commandLineArguments);
         if (!processOptional.isPresent())
             debugLogger.logMessage("Couldn't execute process: " + commandLineArguments.stream().collect(Collectors.joining(" ")));
@@ -104,6 +105,13 @@ public final class FfmpegDownloader {
     private final FilenameResolver filenameResolver;
     private final CustomizedLogger debugLogger;
     private final TwitchM3U8WriterFactory twitchM3U8WriterFactory;
+
+    private String getInputName(String outputName) {
+        String name = com.google.common.io.Files.getNameWithoutExtension(outputName);
+        String extension = com.google.common.io.Files.getFileExtension(outputName);
+        String inputName = name + " playlist";
+        return extension.isEmpty() ? inputName : inputName + "." + extension;
+    }
 
     private List<String> getFfmpegArguments(List<String> ffmpegOptions, String inputFileLocation, String outputFileLocation) {
         ImmutableList.Builder<String> builder = ImmutableList.builder();
