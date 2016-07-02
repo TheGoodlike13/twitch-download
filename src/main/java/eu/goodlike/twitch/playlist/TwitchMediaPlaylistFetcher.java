@@ -116,6 +116,7 @@ public final class TwitchMediaPlaylistFetcher {
         params.forEach(builder::removeAllQueryParameters);
 
         builder.removePathSegment(pathSize - 1);
+        builder.addPathSegment("");
         return Optional.of(builder.build().toString());
     }
 
