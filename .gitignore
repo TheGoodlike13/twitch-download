@@ -53,3 +53,4 @@ gradle.properties
 
 *.mp4
 *.m3u8
+*.jar
