@@ -65,7 +65,6 @@ public final class VideoDownloader {
 
     private CompletableFuture<File> writeInputStreamToFile(InputStream inputStream, Path location) {
         try {
-            Files.createFile(location);
             Files.copy(inputStream, location);
         } catch (IOException e) {
             return Futures.failedFuture(e);
