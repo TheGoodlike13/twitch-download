@@ -23,7 +23,6 @@ import eu.goodlike.twitch.token.TokenFetcher;
 import eu.goodlike.twitch.vod.VideoDownloader;
 import okhttp3.OkHttpClient;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -79,19 +78,18 @@ public final class TwitchVodDownloader {
         FfmpegDownloader ffmpegDownloader = new FfmpegDownloader(commandLineRunner, ffmpegPolicy, outputPolicy, playlistPolicy, filenameResolver, debugLogger, twitchM3U8WriterFactory);
         ManualDownloader manualDownloader = new ManualDownloader(videoDownloader, outputPolicy, filenameResolver, debugLogger, errorHandler);
 
-        List<CompletableFuture<File>> downloadFutures = new ArrayList<>();
+        List<CompletableFuture<?>> downloadFutures = new ArrayList<>();
         for (int vodId : inputPolicy.getVodIds()) {
             CompletableFuture<MediaPlaylist> mediaPlaylist = twitchMasterPlaylistFetcher.fetchMasterPlaylistForVodId(vodId)
                     .thenCompose(twitchMediaPlaylistFetcher::fetchMediaPlaylist);
 
-            CompletableFuture<List<CompletableFuture<File>>> fileListFuture = ffmpegPolicy.isFfmpegEnabled()
+            CompletableFuture<?> downloadFuture = ffmpegPolicy.isFfmpegEnabled()
                     ? mediaPlaylist
-                    .thenApply(media -> ffmpegDownloader.download(media, vodId))
+                    .thenCompose(media -> ffmpegDownloader.download(media, vodId))
                     : mediaPlaylist
-                    .thenApply(media -> manualDownloader.download(media, vodId));
+                    .thenCompose(media -> manualDownloader.download(media, vodId));
 
-            fileListFuture
-                    .thenAccept(downloadFutures::addAll);
+            downloadFutures.add(downloadFuture);
         }
 
         CompletableFuture<?>[] futures = downloadFutures.toArray(new CompletableFuture[downloadFutures.size()]);

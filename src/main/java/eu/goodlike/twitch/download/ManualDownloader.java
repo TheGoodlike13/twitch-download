@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -27,10 +26,11 @@ import java.util.concurrent.CompletableFuture;
 public final class ManualDownloader {
 
     /**
-     * @return all downloaded files from media playlist; uses vodId for file output formatting
+     * @return CompletableFuture which will complete when the VoD is downloaded; this CompletableFuture
+     * will wait until all parts are done downloading
      * @throws NullPointerException if media playlist is null
      */
-    public List<CompletableFuture<File>> download(MediaPlaylist mediaPlaylist, int vodId) {
+    public CompletableFuture<?> download(MediaPlaylist mediaPlaylist, int vodId) {
         Null.check(mediaPlaylist).ifAny("Media playlist cannot be null");
 
         String outputFolder = outputPolicy.getOutputFolderFormat();
@@ -38,14 +38,14 @@ public final class ManualDownloader {
                 .map(FileUtils::findAvailableName);
         if (!outputName.isPresent()) {
             debugLogger.logMessage("Cannot resolve name for output folder: " + outputFolder);
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
 
         Optional<Path> pathOptional = outputName.flatMap(FileUtils::getPath);
         if (!pathOptional.isPresent()) {
             outputName
                     .ifPresent(name -> debugLogger.logMessage("Output folder is not a valid path: " + name));
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
 
         Path path = pathOptional.get();
@@ -53,7 +53,7 @@ public final class ManualDownloader {
             Files.createDirectory(path);
         } catch (IOException e) {
             debugLogger.logMessage("Cannot create directory at: " + path);
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
 
         return downloadFilesInto(path, mediaPlaylist);
@@ -83,13 +83,13 @@ public final class ManualDownloader {
     private final CustomizedLogger debugLogger;
     private final CompletableFutureErrorHandler errorHandler;
 
-    private List<CompletableFuture<File>> downloadFilesInto(Path folder, MediaPlaylist mediaPlaylist) {
+    private CompletableFuture<?> downloadFilesInto(Path folder, MediaPlaylist mediaPlaylist) {
         List<CompletableFuture<File>> processes = new ArrayList<>();
         for (TwitchStreamPart part : mediaPlaylist.getStreamParts()) {
             Optional<HttpUrl> locationUrlOptional = part.getLocationUrl();
             if (!locationUrlOptional.isPresent()) {
                 debugLogger.logMessage("Stream segment is not a valid url: " + part.getFullLocation());
-                return null;
+                continue;
             }
             HttpUrl locationUrl = locationUrlOptional.get();
             CompletableFuture<File> fileFuture = videoDownloader.download(folder.resolve(part.getLocationName()), locationUrl)
@@ -97,7 +97,8 @@ public final class ManualDownloader {
 
             processes.add(fileFuture);
         }
-        return processes;
+        CompletableFuture<?>[] fileFutures = processes.toArray(new CompletableFuture[processes.size()]);
+        return CompletableFuture.allOf(fileFutures);
     }
 
 }

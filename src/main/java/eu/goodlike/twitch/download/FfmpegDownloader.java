@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -31,11 +30,11 @@ import java.util.stream.Collectors;
 public final class FfmpegDownloader {
 
     /**
-     * @return list of a single playlist file used by ffmpeg; this CompletableFuture will wait until ffmpeg process
-     * is done and clean up afterwards if needed
+     * @return CompletableFuture which will complete when the VoD is downloaded; this CompletableFuture
+     * will wait until ffmpeg process is done and clean up afterwards if needed
      * @throws NullPointerException if media playlist is null
      */
-    public List<CompletableFuture<File>> download(MediaPlaylist mediaPlaylist, int vodId) {
+    public CompletableFuture<?> download(MediaPlaylist mediaPlaylist, int vodId) {
         Null.check(mediaPlaylist).ifAny("Media playlist cannot be null");
 
         String outputFile = outputPolicy.getOutputFormat();
@@ -43,7 +42,7 @@ public final class FfmpegDownloader {
                 .map(FileUtils::findAvailableName);
         if (!outputName.isPresent()) {
             debugLogger.logMessage("Cannot resolve name for output file: " + outputFile);
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
 
         Optional<Path> pathOptional = outputName.flatMap(FileUtils::getPath)
@@ -51,7 +50,7 @@ public final class FfmpegDownloader {
         if (!pathOptional.isPresent()) {
             outputName
                     .ifPresent(name -> debugLogger.logMessage("Output file is not a valid path: " + name));
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
         Path path = pathOptional.get();
 
@@ -59,7 +58,7 @@ public final class FfmpegDownloader {
         Optional<File> fileOptional = twitchM3U8Writer.writeMediaPlaylist(path);
         if (!fileOptional.isPresent()) {
             debugLogger.logMessage("Could not create playlist file from stream at: " + path);
-            return Collections.emptyList();
+            return CompletableFuture.completedFuture(null);
         }
         CompletableFuture<File> fileFuture = Futures.fromOptional(fileOptional, () -> null);
 
@@ -73,7 +72,7 @@ public final class FfmpegDownloader {
         if (playlistPolicy.isCleanupPlaylistEnabled())
             fileFuture = fileFuture.whenComplete(deletePlaylistFile(path));
 
-        return ImmutableList.of(fileFuture);
+        return fileFuture;
     }
 
     // CONSTRUCTORS
