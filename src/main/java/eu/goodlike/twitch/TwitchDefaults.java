@@ -14,9 +14,16 @@ public final class TwitchDefaults {
 
     public static final String START_OFFSET_PARAM = "start_offset";
     public static final String END_OFFSET_PARAM = "end_offset";
+
+    public static final String TWITCH_M3U8_MEDIA_LOCATION_FORMAT =
+            "{}?" + START_OFFSET_PARAM + "={}&" + END_OFFSET_PARAM + "={}";
+
+    public static final String TWITCH_M3U8_MEDIA_FULL_LOCATION_FORMAT =
+            "{}" + TWITCH_M3U8_MEDIA_LOCATION_FORMAT;
+
     public static final String TWITCH_M3U8_MEDIA_PART_FORMAT =
-            M3U8_MEDIA_PREFIX + "{},{}" + System.lineSeparator() +
-            "{}{}?" + START_OFFSET_PARAM + "={}&" + END_OFFSET_PARAM + "={}";
+            M3U8_MEDIA_PREFIX + "{},{}" + System.lineSeparator() + TWITCH_M3U8_MEDIA_FULL_LOCATION_FORMAT;
+
 
     // PRIVATE
 
