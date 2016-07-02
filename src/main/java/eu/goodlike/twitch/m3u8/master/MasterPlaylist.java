@@ -13,9 +13,11 @@ public final class MasterPlaylist {
 
     /**
      * @return playlist source url for given quality, Optional::empty if such quality was not found
+     * @throws NullPointerException if quality name is null
      */
     public Optional<String> getStreamPlaylistUrlForQuality(String qualityName) {
-        return Optional.ofNullable(streamSources.get(qualityName));
+        Null.check(qualityName).ifAny("Quality name cannot be null");
+        return Optional.ofNullable(streamSources.get(qualityName.toLowerCase()));
     }
 
     // CONSTRUCTORS

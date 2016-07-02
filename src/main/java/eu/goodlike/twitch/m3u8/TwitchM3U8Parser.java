@@ -52,7 +52,7 @@ public final class TwitchM3U8Parser implements AutoCloseable {
                 if (nameEndIndex < 0)
                     return logFailure("Invalid m3u8 media tag: NAME attribute value incorrectly specified");
 
-                String name = line.substring(nameStartIndex, nameEndIndex);
+                String name = line.substring(nameStartIndex, nameEndIndex).toLowerCase();
 
                 line = skipUntil(nextLine -> !nextLine.startsWith(M3U8_TAG_START));
                 if (line == null)

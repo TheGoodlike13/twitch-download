@@ -73,6 +73,7 @@ public final class OptionsParser implements OptionsProvider {
     public String getQualityLevel() {
         return Optional.ofNullable(arguments.getString(QUALITY_KEY))
                 .filter(str -> !str.isEmpty())
+                .map(String::toLowerCase)
                 .orElse(DEFAULT_QUALITY_LEVEL);
     }
 

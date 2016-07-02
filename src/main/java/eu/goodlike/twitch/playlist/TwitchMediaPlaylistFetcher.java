@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import static eu.goodlike.twitch.download.configurations.options.DefaultOptions.DEFAULT_QUALITY_LEVEL;
+
 /**
  * Fetches media playlist for selected quality
  */
@@ -34,7 +36,7 @@ public final class TwitchMediaPlaylistFetcher {
         String qualityLevel = playlistPolicy.getQualityLevel();
         Optional<String> playlistLink = Optionals.firstNotEmpty(
                 masterPlaylist.getStreamPlaylistUrlForQuality(qualityLevel),
-                masterPlaylist.getStreamPlaylistUrlForQuality("source")
+                masterPlaylist.getStreamPlaylistUrlForQuality(DEFAULT_QUALITY_LEVEL)
                         .filter(source -> playlistPolicy.isDefaultToSourceEnabled())
         );
         return Futures.fromOptional(playlistLink,
