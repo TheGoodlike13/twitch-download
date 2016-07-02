@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import static eu.goodlike.twitch.TwitchDefaults.*;
@@ -25,7 +26,8 @@ public final class TwitchRequestMaker {
      */
     public CompletableFuture<Response> makeRawRequest(HttpUrl httpUrl) {
         Null.check(httpUrl).ifAny("Http url cannot be null");
-        return ResponseCallback.asFuture(client.newCall(buildRequest(httpUrl)));
+        return ResponseCallback.asFuture(client.newCall(buildRequest(httpUrl)))
+                .whenComplete(this::throwOnFailedRequest);
     }
 
     /**
@@ -70,6 +72,31 @@ public final class TwitchRequestMaker {
                 .ifPresent(oauth -> builder.addHeader(OAUTH_HEADER_NAME, OAUTH_HEADER_VALUE_PREFIX + oauth));
 
         return builder.build();
+    }
+
+    private void throwOnFailedRequest(Response response, Throwable throwable) {
+        if (throwable != null)
+            return;
+
+        if (response == null)
+            throw new NullPointerException("Http response was null");
+
+        if (!response.isSuccessful())
+            throw new HttpException("Http request failed, reason: " + getFailureReason(response));
+    }
+
+    private String getFailureReason(Response failedResponse) {
+        try {
+            return failedResponse.body().string();
+        } catch (IOException e) {
+            throw new HttpException("Cannot read body of failed http request");
+        }
+    }
+
+    private static final class HttpException extends RuntimeException {
+        public HttpException(String message) {
+            super(message);
+        }
     }
 
 }
