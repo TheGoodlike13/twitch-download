@@ -8,7 +8,6 @@ import eu.goodlike.twitch.download.configurations.settings.SettingsProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Defines configurations for ffmpeg usage
@@ -39,12 +38,11 @@ public final class FfmpegPolicy {
 
         List<String> options = new ArrayList<>();
         optionsProvider.getAdditionalFfmpegOptions()
-                .flatMap(FfmpegPolicy::parseOptions)
-                .ifPresent(options::add);
+                .map(FfmpegPolicy::parseOptions)
+                .ifPresent(options::addAll);
 
         if (optionsProvider.isFfmpegAppendEnabled() || options.isEmpty())
-            parseOptions(settingsProvider.getFfmpegOptionsSetting())
-                    .ifPresent(options::add);
+            options.addAll(parseOptions(settingsProvider.getFfmpegOptionsSetting()));
 
         return new FfmpegPolicy(true, options);
     }
@@ -65,11 +63,32 @@ public final class FfmpegPolicy {
     private final boolean ffmpegEnabled;
     private final List<String> ffmpegOptions;
 
-    private static Optional<String> parseOptions(String optionString) {
+    private static List<String> parseOptions(String optionString) {
         optionString = optionString.trim();
-        return optionString.isEmpty()
-                ? Optional.empty()
-                : Optional.of(optionString);
+        if (optionString.isEmpty())
+            return Collections.emptyList();
+
+        ImmutableList.Builder<String> listBuilder = ImmutableList.builder();
+        StringBuilder stringBuilder = new StringBuilder();
+        int size = optionString.length();
+        int index = -1;
+        boolean escapeSpaces = false;
+        while (++index < size) {
+            char c = optionString.charAt(index);
+            if (c == ' ' && !escapeSpaces) {
+                listBuilder.add(stringBuilder.toString());
+                stringBuilder = new StringBuilder();
+                continue;
+            } else if (c == '"' && (index == 0 || optionString.charAt(index - 1) != '\\'))
+                escapeSpaces = !escapeSpaces;
+
+            stringBuilder.append(c);
+        }
+        String last = stringBuilder.toString();
+        if (!last.isEmpty())
+            listBuilder.add(last);
+
+        return listBuilder.build();
     }
 
 }
