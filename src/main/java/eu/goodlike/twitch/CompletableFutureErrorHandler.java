@@ -47,6 +47,9 @@ public final class CompletableFutureErrorHandler implements AutoCloseable {
 
     private void handleErrorJustOnce(Throwable error, String errorMessage) {
         synchronized (lock) {
+            while (error.getCause() != null)
+                error = error.getCause();
+
             if (handledExceptions.add(error))
                 debugLogger.logMessage(errorMessage + "; exception message: " + error.getMessage());
         }
