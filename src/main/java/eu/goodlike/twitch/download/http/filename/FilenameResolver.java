@@ -8,17 +8,22 @@ import eu.goodlike.twitch.download.configurations.policy.PlaylistPolicy;
 import eu.goodlike.twitch.stream.StreamDataFetcher;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Resolves the output filename from twitch stream data
  */
 public final class FilenameResolver {
 
+    /**
+     * @return output name, which is the result of formatting outputFormat with vodId data, if needed
+     */
     public Optional<String> resolveOutputName(String outputFormat, int vodId) {
         Traversable lazyJsonTraversable = LazyJsonTraversable.from(() -> streamDataFetcher.fetchStreamDataForVodId(vodId), debugLogger);
         Traversable lazyJsonTraversableOverride = new LazyJsonTraversableOverride(playlistPolicy, lazyJsonTraversable);
         TraversableFormatter traversableFormatter = new TraversableFormatter(lazyJsonTraversable, lazyJsonTraversableOverride);
-        return traversableFormatter.format(outputFormat);
+        return traversableFormatter.format(outputFormat)
+                .map(this::replaceForbiddenCharacters);
     }
 
     // CONSTRUCTORS
@@ -37,6 +42,12 @@ public final class FilenameResolver {
     private final StreamDataFetcher streamDataFetcher;
     private final CustomizedLogger debugLogger;
     private final PlaylistPolicy playlistPolicy;
+
+    private String replaceForbiddenCharacters(String string) {
+        return "";
+    }
+
+    private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile(""); // TODO find pattern
 
     private static final class LazyJsonTraversableOverride implements Traversable {
         @Override
