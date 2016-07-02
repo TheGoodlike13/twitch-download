@@ -3,7 +3,7 @@ package eu.goodlike.twitch;
 import eu.goodlike.functional.Futures;
 import eu.goodlike.io.log.CustomizedLogger;
 
-import java.util.IdentityHashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -35,7 +35,7 @@ public final class CompletableFutureErrorHandler implements AutoCloseable {
     public CompletableFutureErrorHandler(CustomizedLogger debugLogger) {
         this.debugLogger = debugLogger;
 
-        this.handledExceptions = new IdentityHashMap<Throwable, Object>().keySet();
+        this.handledExceptions = new HashSet<>();
     }
 
     // PRIVATE
