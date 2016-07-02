@@ -64,7 +64,7 @@ public final class FfmpegDownloader {
         }
         CompletableFuture<File> fileFuture = Futures.fromOptional(fileOptional, () -> null);
 
-        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), outputName, outputName);
+        List<String> commandLineArguments = getFfmpegArguments(ffmpegPolicy.getFfmpegOptions(), path.toString(), outputName);
         Optional<Process> processOptional = commandLineRunner.execute(commandLineArguments);
         if (!processOptional.isPresent())
             debugLogger.logMessage("Couldn't execute process: " + commandLineArguments.stream().collect(Collectors.joining(" ")));
