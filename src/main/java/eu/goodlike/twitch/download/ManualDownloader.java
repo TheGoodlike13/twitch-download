@@ -92,7 +92,7 @@ public final class ManualDownloader {
                 continue;
             }
             HttpUrl locationUrl = locationUrlOptional.get();
-            CompletableFuture<File> fileFuture = videoDownloader.download(folder.resolve(part.getLocationName()), locationUrl)
+            CompletableFuture<File> fileFuture = videoDownloader.download(folder.resolve(part.getLocation()), locationUrl)
                     .whenComplete(errorHandler.logOnError("Could not download file from: " + locationUrl));
 
             processes.add(fileFuture);

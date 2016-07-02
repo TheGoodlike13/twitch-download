@@ -20,6 +20,20 @@ import static eu.goodlike.twitch.TwitchDefaults.*;
 public final class TwitchStreamPart {
 
     /**
+     * @return location of this stream part, without offsets
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * @return duration of this stream part
+     */
+    public BigDecimal getDuration() {
+        return duration;
+    }
+
+    /**
      * @return true if this twitch stream part is from the same file and follows the other part immediately
      */
     public boolean canBeAppendedTo(TwitchStreamPart other) {
@@ -59,13 +73,6 @@ public final class TwitchStreamPart {
      */
     public TwitchStreamPart setLocationPrefix(String locationPrefix) {
         return new TwitchStreamPart(duration, location, startOffset, endOffset, name, locationPrefix);
-    }
-
-    /**
-     * @return String representing the name of the location
-     */
-    public String getLocationName() {
-        return location;
     }
 
     /**

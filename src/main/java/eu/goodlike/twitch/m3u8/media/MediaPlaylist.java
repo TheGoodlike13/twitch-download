@@ -4,7 +4,12 @@ import com.google.common.collect.ImmutableList;
 import eu.goodlike.functional.ImmutableCollectors;
 import eu.goodlike.neat.Null;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
+
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 
 /**
  * Contains stream VoD fragments
@@ -27,6 +32,19 @@ public final class MediaPlaylist {
         return new MediaPlaylist(streamParts.stream()
                 .map(part -> part.setLocationPrefix(locationPrefix))
                 .collect(ImmutableCollectors.toList()));
+    }
+
+    /**
+     * @return target duration of this media playlist; this will be (largest duration + 1) rounded down, or 0 if
+     * there are no parts
+     */
+    public BigInteger getTargetDuration() {
+        return streamParts.stream()
+                .map(TwitchStreamPart::getDuration)
+                .max(BigDecimal::compareTo)
+                .map(BigDecimal::toBigInteger)
+                .map(big -> big.add(ONE))
+                .orElse(ZERO);
     }
 
     // CONSTRUCTORS
