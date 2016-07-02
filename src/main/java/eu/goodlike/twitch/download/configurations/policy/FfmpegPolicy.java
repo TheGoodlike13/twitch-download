@@ -1,7 +1,6 @@
 package eu.goodlike.twitch.download.configurations.policy;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import eu.goodlike.neat.Null;
 import eu.goodlike.twitch.download.configurations.options.OptionsProvider;
 import eu.goodlike.twitch.download.configurations.settings.SettingsProvider;
@@ -9,6 +8,7 @@ import eu.goodlike.twitch.download.configurations.settings.SettingsProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Defines configurations for ffmpeg usage
@@ -39,11 +39,12 @@ public final class FfmpegPolicy {
 
         List<String> options = new ArrayList<>();
         optionsProvider.getAdditionalFfmpegOptions()
-                .map(FfmpegPolicy::parseOptions)
-                .ifPresent(options::addAll);
+                .flatMap(FfmpegPolicy::parseOptions)
+                .ifPresent(options::add);
 
         if (optionsProvider.isFfmpegAppendEnabled() || options.isEmpty())
-            options.addAll(parseOptions(settingsProvider.getFfmpegOptionsSetting()));
+            parseOptions(settingsProvider.getFfmpegOptionsSetting())
+                    .ifPresent(options::add);
 
         return new FfmpegPolicy(true, options);
     }
@@ -64,11 +65,11 @@ public final class FfmpegPolicy {
     private final boolean ffmpegEnabled;
     private final List<String> ffmpegOptions;
 
-    private static List<String> parseOptions(String optionString) {
+    private static Optional<String> parseOptions(String optionString) {
         optionString = optionString.trim();
         return optionString.isEmpty()
-                ? Collections.emptyList()
-                : Lists.newArrayList(optionString.split(" "));
+                ? Optional.empty()
+                : Optional.of(optionString);
     }
 
 }
