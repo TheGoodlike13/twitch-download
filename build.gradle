@@ -1,3 +1,9 @@
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+
+
 plugins {
     id 'java'
     id 'idea'
@@ -52,3 +58,30 @@ jar {
         attributes 'Main-Class': 'eu.goodlike.twitch.download.TwitchVodDownloader'
     }
 }
+
+def buildDirectory = "${project.rootDir}\\copy"
+def buildLocation = new File(buildDirectory)
+
+shadowJar {
+    destinationDir = buildLocation
+    baseName = rootProject.name
+    classifier = null
+    version = project.version
+}
+
+task buildBatchFile << {
+    def batchFileContents = [
+            "@echo off",
+            "java -jar \"%~dp0${rootProject.name}-${project.version}.jar\" %*"
+    ]
+
+    def batchFileName = 'twitchVoD.bat'
+    def path = Paths.get(buildDirectory)
+    if (Files.notExists(path))
+        Files.createDirectory(path)
+
+    Files.write(path.resolve(batchFileName), batchFileContents, StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)
+}
+
+shadowJar.dependsOn buildBatchFile
