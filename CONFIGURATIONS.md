@@ -6,7 +6,9 @@ with the settings file and read up on the command line options
 ## Settings file
 
 Settings file can be found [here](copy/twitch-download.properties)
+
 I've taken my time to explain what each setting does there.
+
 In general, anything you can enter with command line will override the
 settings. Also, if any of the settings (or the whole file) is missing,
 the application has hardcoded defaults anyway.
@@ -23,9 +25,12 @@ Uses output_format for the folder name (minus the file extension).
 
 ### -fo OPTIONS, --ffmpeg_options OPTIONS
 Adds additional options to the ffmpeg execution. For example:
+
 -fo " -ss 00:00:03 -t 00:00:08"
+
 This will only download 8 seconds of the VoD, start at 3rd second of the
 VoD.
+
 Notice how OPTIONS is in brackets (that's because of the spaces) and I
 added an extra space there. It's because if no space is added, the
 parser library I use thinks it's some kind of a flag and not the OPTIONS
@@ -50,8 +55,11 @@ your selection is missing, and skip the VoD instead.
 
 ### vodId
 VoD id refers to the number 73595705 in the link
+
 https://www.twitch.tv/davidangel64/v/73595705
+
 You can also specify it with 'v' prefix, like this: v73595705
+
 Then, if you're feeling particularly fancy, you can create a text file
 with the line "73595705" in it and specify that file's name. App checks:
 link -> file -> prefix -> no prefix before ignoring. And yes, all duplicate

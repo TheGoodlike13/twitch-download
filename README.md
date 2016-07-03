@@ -3,7 +3,6 @@
 Downloads twitch VoDs (Video on Demand)
 
 Couldn't have been done without the help of:
-
 https://github.com/fonsleenaars/twitch-hls-vods
 
 ## How to?
@@ -13,6 +12,7 @@ https://github.com/fonsleenaars/twitch-hls-vods
 2. Run cmd with "gradlew shadowJar" in that folder
 3. Take all the files from "copy" folder and run cmd with "twitchVoD -h"
 4. RECOMMENDED! Install ffmpeg: https://ffmpeg.org/
+
 Without ffmpeg you can only download small pieces (depending on VoD, it
 can vary between 4-60s each)
 
