@@ -1,7 +1,9 @@
 # Twitch VoD downloader
 
 Downloads twitch VoDs (Video on Demand)
+
 Couldn't have been done without the help of:
+
 https://github.com/fonsleenaars/twitch-hls-vods
 
 ## How to?
@@ -19,8 +21,11 @@ You can read more [here](CONFIGURATIONS.md)
 ## Why?
 
 I know this exists: http://docs.livestreamer.io/
+
 But the file it downloads is weird (slightly larger and opens slowly)
+
 Also, I just wanted to code something. So I coded this (real reason)
+
 Also, how cool is that output file naming feature? :D
 
 ## FAQ:
