@@ -6,6 +6,8 @@ https://github.com/fonsleenaars/twitch-hls-vods
 
 ## How to?
 
+(yes, 0 is here for backwards compatibility)
+0. Install Java 8u92 or later: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 1. Put this code somewhere
 2. Run cmd with "gradlew shadowJar" in that folder
 3. Take all the files from "copy" folder and run cmd with "twitchVoD -h"
