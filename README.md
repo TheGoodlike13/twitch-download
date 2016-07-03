@@ -13,8 +13,8 @@ https://github.com/fonsleenaars/twitch-hls-vods
 3. Take all the files from "copy" folder and run cmd with "twitchVoD -h"
 4. RECOMMENDED! Install ffmpeg: https://ffmpeg.org/
 
-Without ffmpeg you can only download small pieces (depending on VoD, it
-can vary between 4-60s each)
+Without ffmpeg you can only download the VoD in small pieces
+(depending on VoD, it can vary between 4-60s each)
 
 You can read more [here](CONFIGURATIONS.md)
 
