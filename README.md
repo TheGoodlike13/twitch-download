@@ -27,7 +27,3 @@ But the file it downloads is weird (slightly larger and opens slowly)
 Also, I just wanted to code something. So I coded this (real reason)
 
 Also, how cool is that output file naming feature? :D
-
-## FAQ:
-
-Nobody has asked me anything yet.

@@ -45,8 +45,8 @@ instead of appending. Not sure if it's useful, but here it is!
 If you want a different output format than the one in settings, use this.
 Same rules apply as in the settings file.
 
-### -q {audio_only,mobile,low,medium,high,source}, --quality {audio_only,mobile,low,medium,high,source}
-CHOOSE YOUR QUALITY! (source is default)
+### -q QUALITY, --quality QUALITY
+CHOOSE YOUR QUALITY! (source/1080p is default)
 
 ### -smq, --skip_missing_quality
 Sometimes you just want specific quality and won't take no for an answer.
@@ -86,8 +86,7 @@ By default no file logging is done.
 Basically, a playlist file is created for ffmpeg, and deleted afterwards.
 If you use this, it will not be deleted.
 
-### -npo, --no_playlist_optimization
+### -po, --playlist_optimization
 Some VoDs are stored in larger parts than the playlist reports (i.e.
-stored in 60s segments, but playlist shows 4s parts). These will be
-automatically combined when possible. Unless you use this option, of
-course.
+stored in 60s segments, but playlist shows 4s parts). These can be
+combined. Not recommended! May not work with all VoDs!

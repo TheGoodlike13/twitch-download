@@ -7,7 +7,7 @@ public final class CommandLineKeys {
     public static final String HIDE_DEBUG_KEY = "HD";
     public static final String HIDE_PROCESS_OUTPUT_KEY = "HPO";
     public static final String NO_PLAYLIST_CLEAN_KEY = "NPC";
-    public static final String NO_PLAYLIST_OPTIMIZATION_KEY = "NPO";
+    public static final String PLAYLIST_OPTIMIZATION_KEY = "PO";
     public static final String SKIP_MISSING_QUALITY_KEY = "SMQ";
 
     public static final String FFMPEG_OPTIONS_KEY = "OPTIONS";

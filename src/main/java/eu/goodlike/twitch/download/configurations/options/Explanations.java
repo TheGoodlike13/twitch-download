@@ -8,10 +8,10 @@ public final class Explanations {
                     "available quality will be used instead. Use this option to skip the VoD instead.";
 
     public static final String PLAYLIST_OPTIMIZATION_EXPLANATION =
-            "disable playlist optimization" + System.lineSeparator() +
-                    "The stream VoDs are sometimes stored in segments larger than the playlist reports. " +
-                    "These segments can be automatically concatenated. If you do not wish to do this for " +
-                    "some reason, use this option.";
+            "enable playlist optimization" + System.lineSeparator() +
+                    "Legacy option, not recommended since it does not do much, but does not work for all" +
+                    "twitch VoDs anymore. Essentially it combines parts into bigger ones which should be" +
+                    "theoretically somewhat more efficient, but not worth turning it off manually.";
 
     public static final String DOWNLOAD_EXPLANATION =
             "don't use ffmpeg, download parts instead" + System.lineSeparator() +
@@ -70,7 +70,7 @@ public final class Explanations {
     public static final String CUSTOM_QUALITY_EXPLANATION =
             "custom quality level" + System.lineSeparator() +
                     "By default, source quality VoDs will be downloaded. Use this option to download " +
-                    "other quality VoDs instead. If this quality is missing, best available quality " +
+                    "other quality VoDs instead. If this quality is missing, source/1080p quality " +
                     "will be used, unless -smq was used, in which case the VoD will be skipped instead.";
 
     public static final String CUSTOM_FILE_FORMAT_EXPLANATION =

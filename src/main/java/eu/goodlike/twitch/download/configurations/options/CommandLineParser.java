@@ -11,7 +11,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import java.util.Optional;
 
 import static eu.goodlike.twitch.download.configurations.options.CommandLineKeys.*;
-import static eu.goodlike.twitch.download.configurations.options.DefaultOptions.POSSIBLE_QUALITY_LEVELS;
 import static eu.goodlike.twitch.download.configurations.options.Explanations.*;
 
 /**
@@ -61,8 +60,8 @@ public final class CommandLineParser {
                 .dest(NO_PLAYLIST_CLEAN_KEY)
                 .action(Arguments.storeTrue())
                 .help(PLAYLIST_CLEAN_EXPLANATION);
-        argumentParser.addArgument("-npo", "--no_playlist_optimization")
-                .dest(NO_PLAYLIST_OPTIMIZATION_KEY)
+        argumentParser.addArgument("-po", "--playlist_optimization")
+                .dest(PLAYLIST_OPTIMIZATION_KEY)
                 .action(Arguments.storeTrue())
                 .help(PLAYLIST_OPTIMIZATION_EXPLANATION);
         argumentParser.addArgument("-smq", "--skip_missing_quality")
@@ -81,7 +80,6 @@ public final class CommandLineParser {
                 .help(CUSTOM_FILE_FORMAT_EXPLANATION);
         argumentParser.addArgument("-q", "--quality")
                 .dest(QUALITY_KEY)
-                .choices(POSSIBLE_QUALITY_LEVELS)
                 .help(CUSTOM_QUALITY_EXPLANATION);
         argumentParser.addArgument("-tm", "--threads_max")
                 .dest(THREAD_MAX_KEY)

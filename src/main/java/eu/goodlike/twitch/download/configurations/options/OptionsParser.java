@@ -43,7 +43,7 @@ public final class OptionsParser implements OptionsProvider {
 
     @Override
     public boolean isPlaylistOptimizationEnabled() {
-        return !arguments.getBoolean(NO_PLAYLIST_OPTIMIZATION_KEY);
+        return arguments.getBoolean(PLAYLIST_OPTIMIZATION_KEY);
     }
 
     @Override
