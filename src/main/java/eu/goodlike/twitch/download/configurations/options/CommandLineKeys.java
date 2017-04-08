@@ -13,7 +13,7 @@ public final class CommandLineKeys {
     public static final String FFMPEG_OPTIONS_KEY = "OPTIONS";
     public static final String LOG_FILE_KEY = "FILE";
     public static final String OUTPUT_KEY = "FORMAT";
-    public static final String QUALITY_KEY = "Q";
+    public static final String QUALITY_KEY = "QUALITY";
     public static final String THREAD_MAX_KEY = "N";
 
     public static final String VOD_ID_KEY = "vodId";
