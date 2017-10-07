@@ -13,9 +13,7 @@ import eu.goodlike.twitch.m3u8.media.SimpleStreamPart;
 import eu.goodlike.twitch.m3u8.media.StreamPart;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static eu.goodlike.twitch.m3u8.M3U8Defaults.*;
@@ -40,7 +38,7 @@ public final class TwitchM3U8Parser implements AutoCloseable {
         if (!M3U8_FILE_START.equals(line))
             return logFailure("Invalid file start, expected: " + M3U8_FILE_START + ", found: " + line);
 
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        Map<String, String> builder = new HashMap<>();
         while (scanner.hasNextLine()) {
             line = skipUntil(nextLine -> nextLine.startsWith(M3U8_MASTER_MEDIA_TAG_PREFIX));
             if (line != null) {
@@ -62,10 +60,10 @@ public final class TwitchM3U8Parser implements AutoCloseable {
                 if (line == null)
                     return logFailure("Missing link for stream source with specified name: " + name);
 
-                builder.put(name, line);
+                builder.putIfAbsent(name, line);
             }
         }
-        return Optional.of(new MasterPlaylist(builder.build()));
+        return Optional.of(new MasterPlaylist(ImmutableMap.copyOf(builder)));
     }
 
     /**

@@ -10,6 +10,7 @@ public final class DefaultOptions {
 
     public static final String DEFAULT_QUALITY_LEVEL = "source";
     public static final String DEFAULT_QUALITY_LEVEL_FALLBACK = "1080p";
+    public static final String DEFAULT_QUALITY_LEVEL_FALLBACK_2 = "720p";
 
     // PRIVATE
 

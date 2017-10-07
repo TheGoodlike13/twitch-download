@@ -50,12 +50,12 @@ public final class VodParser {
     private Set<Integer> getVodIds(Set<Integer> parsedIds, Set<Path> visitedPaths) {
         for (String vodId : vodIds)
             parseVodId(vodId)
-                    .ifFirstKind(parsedIds::add)
-                    .filterSecondKind(visitedPaths::add)
-                    .mapSecondKind(this::parseFile)
-                    .mapSecondKind(ids -> new VodParser(ids, debugLogger))
-                    .mapSecondKind(parser -> parser.getVodIds(parsedIds, visitedPaths))
-                    .ifSecondKind(parsedIds::addAll);
+                    .ifLeft(parsedIds::add)
+                    .filterRight(visitedPaths::add)
+                    .mapRight(this::parseFile)
+                    .mapRight(ids -> new VodParser(ids, debugLogger))
+                    .mapRight(parser -> parser.getVodIds(parsedIds, visitedPaths))
+                    .ifRight(parsedIds::addAll);
 
         return parsedIds;
     }
@@ -79,7 +79,7 @@ public final class VodParser {
                 .filter(Files::isReadable);
 
         if (path.isPresent())
-            return Either.ofSecondKind(path);
+            return Either.right(path);
 
         if (vodId.startsWith("v"))
             vodId = vodId.substring(1);
@@ -91,7 +91,7 @@ public final class VodParser {
         if (INTEGER_STRING_VALIDATOR.isValid(vodId)) {
             int id = Integer.parseInt(vodId);
             if (id > 0)
-                return Either.ofFirstKind(id);
+                return Either.left(id);
         }
         debugLogger.logMessage("Invalid VoD id: " + vodId);
         return Either.neither();

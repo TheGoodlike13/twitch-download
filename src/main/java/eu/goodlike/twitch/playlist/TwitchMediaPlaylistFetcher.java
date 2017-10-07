@@ -22,8 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static eu.goodlike.twitch.download.configurations.options.DefaultOptions.DEFAULT_QUALITY_LEVEL;
-import static eu.goodlike.twitch.download.configurations.options.DefaultOptions.DEFAULT_QUALITY_LEVEL_FALLBACK;
+import static eu.goodlike.twitch.download.configurations.options.DefaultOptions.*;
 
 /**
  * Fetches media playlist for selected quality
@@ -38,7 +37,8 @@ public final class TwitchMediaPlaylistFetcher {
         Optional<String> playlistLink = Optionals.firstNotEmpty(
                 masterPlaylist.getStreamPlaylistUrlForQuality(qualityLevel),
                 masterPlaylist.getStreamPlaylistUrlForQuality(DEFAULT_QUALITY_LEVEL).filter(source -> playlistPolicy.isDefaultToSourceEnabled()),
-                masterPlaylist.getStreamPlaylistUrlForQuality(DEFAULT_QUALITY_LEVEL_FALLBACK).filter(source -> playlistPolicy.isDefaultToSourceEnabled())
+                masterPlaylist.getStreamPlaylistUrlForQuality(DEFAULT_QUALITY_LEVEL_FALLBACK).filter(source -> playlistPolicy.isDefaultToSourceEnabled()),
+                masterPlaylist.getStreamPlaylistUrlForQuality(DEFAULT_QUALITY_LEVEL_FALLBACK_2).filter(source -> playlistPolicy.isDefaultToSourceEnabled())
         );
         return Futures.fromOptional(playlistLink,
                 () -> new NoSuchElementException("Could not find requested quality VoD"))
