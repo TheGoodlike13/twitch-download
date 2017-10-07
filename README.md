@@ -7,11 +7,11 @@ https://github.com/fonsleenaars/twitch-hls-vods
 
 ## How to?
 
-0. Install Java 8u92 or later: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-1. Put this code somewhere
-2. Run cmd with "gradlew shadowJar" in that folder
-3. Take all the files from "copy" folder and run cmd with "twitchVoD -h"
-4. RECOMMENDED! Install ffmpeg: https://ffmpeg.org/
+1. Install Java 8u92 or later: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+2. Install ffmpeg: https://ffmpeg.org/
+3. Put this code somewhere
+4. Run cmd with "gradlew shadowJar" in that folder
+5. Take all the files from "copy" folder and run cmd with "twitchVoD -h"
 
 Without ffmpeg you can only download the VoD in small pieces
 (depending on VoD, it can vary between 4-60s each)
