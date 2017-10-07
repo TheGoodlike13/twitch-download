@@ -113,7 +113,8 @@ public final class FfmpegDownloader {
     private List<String> getFfmpegArguments(List<String> ffmpegOptions, String inputFileLocation, String outputFileLocation) {
         ImmutableList.Builder<String> builder = ImmutableList.builder();
         return builder.add("ffmpeg")
-                .add("-i").add(inQuotes(inputFileLocation))
+                .addAll(ENSURE_HTTP_ALLOWED_ARGS)
+                .add(INPUT_ARG).add(inQuotes(inputFileLocation))
                 .addAll(ffmpegOptions)
                 .add(inQuotes(outputFileLocation))
                 .build();
@@ -142,5 +143,8 @@ public final class FfmpegDownloader {
             }
         };
     }
+
+    private static final List<String> ENSURE_HTTP_ALLOWED_ARGS = ImmutableList.of("-protocol_whitelist", "file,tcp,http");
+    private static final String INPUT_ARG = "-i";
 
 }
