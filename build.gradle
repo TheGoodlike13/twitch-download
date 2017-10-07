@@ -3,16 +3,15 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 
-
 plugins {
     id 'java'
     id 'idea'
 
     // helps me keep up to date with dependencies
-    id "com.github.ben-manes.versions" version "0.12.0"
+    id "com.github.ben-manes.versions" version "0.15.0"
 
     // builds fatJar efficiently (much faster than normal)
-    id "com.github.johnrengelman.shadow" version "1.2.3"
+    id "com.github.johnrengelman.shadow" version "2.0.1"
 }
 
 repositories {
@@ -21,21 +20,24 @@ repositories {
 
 dependencies {
     // I DID IT! PRAISE THE REPOSITORY!
-    compile 'eu.goodlike:goodlike-utils:0.0.17'
+    compile 'eu.goodlike:goodlike-utils:0.0.48'
 
     // used for various utility methods
-    compile 'com.google.guava:guava:19.0'
+    compile 'com.google.guava:guava:23.1-jre'
 
     // used for command line argument parsing
-    compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
+    compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
 
     // used for HTTP requests
-    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // used for JSON conversion
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.0.rc2'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.8.0.rc2'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.0.rc2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.1'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.1'
+    compile 'com.fasterxml.jackson.module:jackson-module-paranamer:2.9.1'
 
     // used for their unique (lazy) way to insert objects into Strings
     compile 'org.slf4j:slf4j-api:1.7.21'
@@ -45,7 +47,7 @@ group 'eu.goodlike'
 version '2.1'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+    gradleVersion = '4.2.1'
 }
 
 tasks.withType(JavaCompile) {
